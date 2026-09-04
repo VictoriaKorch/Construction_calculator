@@ -1,7 +1,7 @@
 <!-- views/tile.hbs -->
 {{#> layout}}
 <div class="tile-container">
-    <h1 class="page-title">Список проектов</h1>
+    <h1 class="tile-title">Укрупненные показатели стоимости</h1>
     
     <form class="filter-form" action="/construction/tile" method="GET">
         <div class="filter-group">
@@ -14,17 +14,12 @@
 
     <div class="services-grid">
         {{#each services}}
-            <div class="service-card">
+            <div class="service-card" onclick="window.location.href='/construction/feed?id={{this.id}}'">
                 <img src="http://localhost:9000/construction-assets/{{this.imageUrl}}" class="card-image">
                 <div class="card-content">
                     <h3 class="card-title">{{this.title}}</h3>
-                    <p class="card-description">{{this.description}}</p>
-                    <div class="card-details">
-                        <span>💰 {{this.price}} руб/м²</span>
-                        <span>📐 {{this.area}} м²</span>
-                        <span>❤️ {{this.likesCount}}</span>
-                    </div>
-                    <a href="/construction/feed?id={{this.id}}" class="card-link">Подробнее →</a>
+                    <div class="card-price">💰 {{this.price}} руб/м²</div>
+                    <div class="card-likes">❤️ {{this.likesCount}}</div>
                 </div>
             </div>
         {{else}}

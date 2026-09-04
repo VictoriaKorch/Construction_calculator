@@ -3,40 +3,52 @@
 <div class="add-container">
     <h1 class="page-title">Редактирование черновика</h1>
     {{#if service}}
-        <form class="add-form">
-            <div class="form-group">
+        <form class="add-form" id="draftForm">
+            <!-- Карточка: Название -->
+            <div class="field-card">
                 <label>Название проекта</label>
-                <input type="text" value="{{service.title}}" disabled>
+                <input type="text" value="{{service.title}}" id="editTitle">
             </div>
-            <div class="form-group">
+
+            <!-- Карточка: Описание -->
+            <div class="field-card">
                 <label>Описание</label>
-                <textarea disabled>{{service.description}}</textarea>
+                <textarea id="editDescription">{{service.description}}</textarea>
             </div>
-            <div class="form-row">
-                <div class="form-group half">
-                    <label>💰 Цена (руб/м²)</label>
-                    <input type="number" value="{{service.price}}" disabled>
-                </div>
-                <div class="form-group half">
-                    <label>📐 Площадь (м²)</label>
-                    <input type="number" value="{{service.area}}" disabled>
-                </div>
+
+            <!-- Карточка: Цена -->
+            <div class="field-card">
+                <label>💰 Цена (руб/м²)</label>
+                <input type="number" value="{{service.price}}" id="editPrice">
             </div>
-            <div class="form-group">
+
+            <!-- Карточка: Площадь -->
+            <div class="field-card">
+                <label>📐 Площадь (м²)</label>
+                <input type="number" value="{{service.area}}" id="editArea">
+            </div>
+
+            <!-- Карточка: Категория -->
+            <div class="field-card">
                 <label>Категория</label>
-                <input type="text" value="{{service.category}}" disabled>
+                <input type="text" value="{{service.category}}" id="editCategory">
             </div>
-            <div class="form-row">
-                <div class="form-group half">
-                    <label>Изображение</label>
-                    <img src="http://localhost:9000/construction-assets/{{service.imageUrl}}" class="preview-image">
-                </div>
-                <div class="form-group half">
-                    <label>Видео</label>
-                    <video src="http://localhost:9000/construction-assets/{{service.videoUrl}}" class="preview-video" controls></video>
-                </div>
+
+            <!-- Карточка: Изображение (без подписи внизу) -->
+            <div class="media-card">
+                <img src="http://localhost:9000/construction-assets/{{service.imageUrl}}" class="preview-image">
+            </div>
+
+            <!-- Карточка: Видео (без подписи внизу) -->
+            <div class="media-card">
+                <video src="http://localhost:9000/construction-assets/{{service.videoUrl}}" class="preview-video" controls></video>
             </div>
         </form>
+
+        <!-- Подсказка для пользователя -->
+        <p style="text-align:center;color:#6b7280;font-size:13px;margin-top:8px;">
+            ✏️ Изменения не сохраняются — это демо-режим
+        </p>
     {{else}}
         <p class="empty-message">Черновик не найден</p>
     {{/if}}

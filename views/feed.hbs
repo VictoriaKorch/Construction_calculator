@@ -13,7 +13,13 @@
             </video>
             <div class="video-overlay">
                 <h2 class="service-title">{{service.title}}</h2>
-                <p class="service-description">{{service.description}}</p>
+                
+                <!-- Описание с кнопкой "больше/меньше" -->
+                <div class="description-wrapper">
+                    <p class="service-description" id="descText">{{service.description}}</p>
+                    <button class="toggle-description" onclick="toggleDescription()">Меньше</button>
+                </div>
+
                 <div class="service-details">
                     <span class="detail-item">💰 {{service.price}} руб/м²</span>
                     <span class="detail-item">📐 {{service.area}} м²</span>
@@ -29,4 +35,39 @@
         <div class="empty-state"><p>Нет доступных услуг</p></div>
     {{/if}}
 </div>
+
+<script>
+    // JavaScript для кнопки "больше/меньше"
+    let isExpanded = false;
+    const fullText = "{{service.description}}";
+    const shortText = fullText.length > 60 ? fullText.substring(0, 60) + '...' : fullText;
+
+    function toggleDescription() {
+        const desc = document.getElementById('descText');
+        const btn = document.querySelector('.toggle-description');
+        if (!isExpanded) {
+            desc.textContent = fullText;
+            btn.textContent = 'Меньше';
+            isExpanded = true;
+        } else {
+            desc.textContent = shortText;
+            btn.textContent = 'Больше';
+            isExpanded = false;
+        }
+    }
+
+    // Инициализация — показываем короткий текст
+    document.addEventListener('DOMContentLoaded', function() {
+        const desc = document.getElementById('descText');
+        const btn = document.querySelector('.toggle-description');
+        if (desc && btn) {
+            if (fullText.length <= 60) {
+                btn.style.display = 'none';
+            } else {
+                desc.textContent = shortText;
+                btn.textContent = 'Больше';
+            }
+        }
+    });
+</script>
 {{/layout}}
