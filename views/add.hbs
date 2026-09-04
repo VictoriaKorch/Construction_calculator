@@ -1,0 +1,44 @@
+<!-- views/add.hbs -->
+{{#> layout}}
+<div class="add-container">
+    <h1 class="page-title">Редактирование черновика</h1>
+    {{#if service}}
+        <form class="add-form">
+            <div class="form-group">
+                <label>Название проекта</label>
+                <input type="text" value="{{service.title}}" disabled>
+            </div>
+            <div class="form-group">
+                <label>Описание</label>
+                <textarea disabled>{{service.description}}</textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group half">
+                    <label>💰 Цена (руб/м²)</label>
+                    <input type="number" value="{{service.price}}" disabled>
+                </div>
+                <div class="form-group half">
+                    <label>📐 Площадь (м²)</label>
+                    <input type="number" value="{{service.area}}" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Категория</label>
+                <input type="text" value="{{service.category}}" disabled>
+            </div>
+            <div class="form-row">
+                <div class="form-group half">
+                    <label>Изображение</label>
+                    <img src="http://localhost:9000/construction-assets/{{service.imageUrl}}" class="preview-image">
+                </div>
+                <div class="form-group half">
+                    <label>Видео</label>
+                    <video src="http://localhost:9000/construction-assets/{{service.videoUrl}}" class="preview-video" controls></video>
+                </div>
+            </div>
+        </form>
+    {{else}}
+        <p class="empty-message">Черновик не найден</p>
+    {{/if}}
+</div>
+{{/layout}}

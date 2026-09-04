@@ -1,0 +1,35 @@
+<!-- views/tile.hbs -->
+{{#> layout}}
+<div class="tile-container">
+    <h1 class="page-title">Список проектов</h1>
+    
+    <form class="filter-form" action="/construction/tile" method="GET">
+        <div class="filter-group">
+            <label for="filterPrice">Макс. цена (руб/м²)</label>
+            <input type="number" id="filterPrice" name="filterPrice" value="{{currentFilter}}" placeholder="Например, 50000">
+            <button type="submit" class="btn btn-primary">Фильтр</button>
+            <a href="/construction/tile" class="btn btn-secondary">Сброс</a>
+        </div>
+    </form>
+
+    <div class="services-grid">
+        {{#each services}}
+            <div class="service-card">
+                <img src="http://localhost:9000/construction-assets/{{this.imageUrl}}" class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">{{this.title}}</h3>
+                    <p class="card-description">{{this.description}}</p>
+                    <div class="card-details">
+                        <span>💰 {{this.price}} руб/м²</span>
+                        <span>📐 {{this.area}} м²</span>
+                        <span>❤️ {{this.likesCount}}</span>
+                    </div>
+                    <a href="/construction/feed?id={{this.id}}" class="card-link">Подробнее →</a>
+                </div>
+            </div>
+        {{else}}
+            <p class="empty-message">Нет услуг по фильтру</p>
+        {{/each}}
+    </div>
+</div>
+{{/layout}}

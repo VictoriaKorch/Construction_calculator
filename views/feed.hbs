@@ -1,0 +1,32 @@
+<!-- views/feed.hbs -->
+{{#> layout}}
+<div class="feed-container">
+    {{#if service}}
+        <div class="video-wrapper">
+            <video 
+                src="http://localhost:9000/construction-assets/{{service.videoUrl}}" 
+                class="feed-video" 
+                autoplay 
+                muted 
+                loop 
+                playsinline>
+            </video>
+            <div class="video-overlay">
+                <h2 class="service-title">{{service.title}}</h2>
+                <p class="service-description">{{service.description}}</p>
+                <div class="service-details">
+                    <span class="detail-item">💰 {{service.price}} руб/м²</span>
+                    <span class="detail-item">📐 {{service.area}} м²</span>
+                    <span class="detail-item">🏷️ {{service.category}}</span>
+                </div>
+                <div class="service-actions">
+                    <span class="likes-count">❤️ {{likesCount}}</span>
+                    <a href="/construction/feed?id={{service.id}}&next=true" class="next-button">Следующий →</a>
+                </div>
+            </div>
+        </div>
+    {{else}}
+        <div class="empty-state"><p>Нет доступных услуг</p></div>
+    {{/if}}
+</div>
+{{/layout}}
