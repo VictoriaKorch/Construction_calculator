@@ -3,25 +3,24 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* Системный стек шрифтов, похожий на Циан, с фоллбеком на Inter */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 body {
-    background: #e5e5e5; /* Темный фон вне приложения для контраста */
+    background: #e5e5e5;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 100vh; /* Жесткая высота для предотвращения сдвигов окна */
     margin: 0;
+    overflow: hidden; /* Скрываем системный скроллбар браузера */
 }
 
 /* ===== КОНТЕЙНЕР ===== */
 .app-container {
     width: 100%;
     max-width: 420px;
-    min-height: 100vh;
-    /* Фон сайта как на Циан (светло-серый) */
+    height: 100vh; /* Жесткая высота вместо min-height */
     background: #F1F3F5; 
     display: flex;
     flex-direction: column;
@@ -31,18 +30,26 @@ body {
 
 .main-content {
     flex: 1;
-    overflow-y: auto;
-    padding-bottom: 60px; /* Отступ для всех страниц кроме ленты */
+    overflow-y: auto; /* Прокрутка работает как раньше */
+    padding-bottom: 60px;
+    
+    /* Скрываем скроллбар в Firefox */
+    scrollbar-width: none; 
+    /* Скрываем скроллбар в IE и старом Edge */
+    -ms-overflow-style: none; 
+}
+
+/* Скрываем скроллбар в Chrome, Safari, Яндекс.Браузере и новом Edge */
+.main-content::-webkit-scrollbar {
+    display: none; 
 }
 
 /* ===== НИЖНЯЯ ПАНЕЛЬ ===== */
 .bottom-nav {
-    position: fixed;
+    position: absolute; /* absolute или fixed внутри контейнера работает отлично */
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     width: 100%;
-    max-width: 420px;
     background: #FFFFFF;
     display: flex;
     justify-content: space-around;
@@ -60,14 +67,12 @@ body {
     transition: color 0.2s ease;
 }
 
-/* Цвет при наведении и активном состоянии (как на Циан) */
 .nav-item:hover, .nav-item.active {
     color: #256BF3; 
 }
 
-/* ===== ЛЕНТА ===== */
+/* ===== ЛЕНТА (TikTok Style) ===== */
 .feed-container {
-    /* Абсолютное позиционирование фиксирует ленту поверх контента без прокрутки */
     position: absolute;
     top: 0;
     left: 0;
@@ -81,7 +86,7 @@ body {
 .video-wrapper {
     position: relative;
     width: 100%;
-    height: 100%; /* Занимает ровно высоту .feed-container */
+    height: 100%;
     overflow: hidden;
 }
 
@@ -96,15 +101,25 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    /* 80px снизу — это отступ, чтобы нижняя панель навигации не перекрывала текст и кнопки */
     padding: 20px 16px 80px 16px; 
     background: linear-gradient(transparent, rgba(0,0,0,0.85));
     color: #FFFFFF;
     pointer-events: none;
+    
+    /* Flex-структура для разделения контента и сайдбара */
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
 }
 
 .video-overlay * {
     pointer-events: auto;
+}
+
+/* Левая часть с текстом */
+.feed-content {
+    flex: 1;
+    padding-right: 16px;
 }
 
 .service-title {
@@ -114,38 +129,54 @@ body {
     text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
+/* ЧИСТЫЙ CSS ДЛЯ КНОПКИ БОЛЬШЕ/МЕНЬШЕ */
+.desc-checkbox {
+    display: none;
+}
+
 .service-description {
     font-size: 15px;
     opacity: 0.95;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     line-height: 1.4;
     text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+}
+
+.line-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Количество строк до обрезки */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.desc-checkbox:checked ~ .service-description {
+    -webkit-line-clamp: unset;
 }
 
 .toggle-description {
-    background: rgba(255,255,255,0.2);
-    border: none;
-    color: #FFFFFF;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    backdrop-filter: blur(4px);
-    margin-bottom: 12px;
     display: inline-block;
-    transition: background 0.2s;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    opacity: 0.8;
 }
 
-.toggle-description:hover {
-    background: rgba(255,255,255,0.3);
+.toggle-description::after {
+    content: attr(data-more);
 }
+
+.desc-checkbox:checked ~ .toggle-description::after {
+    content: attr(data-less);
+}
+/* КОНЕЦ CSS-ЛОГИКИ БОЛЬШЕ/МЕНЬШЕ */
 
 .service-details {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 16px;
     font-size: 13px;
 }
 
@@ -158,38 +189,47 @@ body {
     border: 1px solid rgba(255,255,255,0.2);
 }
 
-.service-actions {
+/* Правая часть (Сайдбар как в TikTok) */
+.feed-sidebar {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 20px;
+    padding-bottom: 10px;
 }
 
-.likes-count {
-    font-size: 16px;
-    font-weight: 700;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 8px 16px;
-    border-radius: 8px;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-/* Синяя кнопка в стиле Циан */
-.next-button {
-    background: #256BF3; 
+.sidebar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
     color: #FFFFFF;
-    padding: 10px 24px;
-    border-radius: 8px;
     text-decoration: none;
-    font-weight: 600;
-    font-size: 15px;
-    transition: background 0.2s ease;
-    border: none;
     cursor: pointer;
 }
 
-.next-button:hover {
-    background: #1556D6; /* Hover состояние кнопки */
+.sidebar-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(4px);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    transition: background 0.2s ease;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-item:hover .sidebar-icon {
+    background: rgba(255,255,255,0.3);
+}
+
+.sidebar-text {
+    font-size: 13px;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 
 .empty-state {
@@ -216,12 +256,11 @@ body {
     margin-bottom: 24px;
 }
 
-/* Белые карточки на сером фоне */
 .field-card, .media-card, .filter-form, .service-card {
     background: #FFFFFF;
     border-radius: 12px;
     margin-bottom: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Легкая тень */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
 }
 
 /* ===== ДОБАВЛЕНИЕ ===== */
@@ -253,7 +292,7 @@ body {
 
 .field-card input:focus,
 .field-card textarea:focus {
-    border-bottom-color: #256BF3; /* Акцентный синий при фокусе */
+    border-bottom-color: #256BF3; 
     outline: none;
 }
 
@@ -356,12 +395,11 @@ body {
 }
 
 .service-card {
-    transition: box-shadow 0.3s ease; /* Плавный переход для Hover */
+    transition: box-shadow 0.3s ease; 
     cursor: pointer;
     overflow: hidden;
 }
 
-/* Hover-эффект для карточки в стиле Циан */
 .service-card:hover {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
@@ -389,7 +427,6 @@ body {
     line-height: 1.3;
 }
 
-/* Цена - главный акцент, жирный шрифт */
 .card-price {
     font-size: 16px;
     color: #1A1A1A;
@@ -408,8 +445,5 @@ body {
     .app-container {
         max-width: 100%;
         box-shadow: none;
-    }
-    .bottom-nav {
-        max-width: 100%;
     }
 }

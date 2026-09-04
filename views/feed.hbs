@@ -12,62 +12,46 @@
                 playsinline>
             </video>
             <div class="video-overlay">
-                <h2 class="service-title">{{service.title}}</h2>
                 
-                <!-- Описание с кнопкой "больше/меньше" -->
-                <div class="description-wrapper">
-                    <p class="service-description" id="descText">{{service.description}}</p>
-                    <button class="toggle-description" onclick="toggleDescription()">Меньше</button>
+                <!-- Левая/Нижняя часть: Текст и теги -->
+                <div class="feed-content">
+                    <h2 class="service-title">{{service.title}}</h2>
+                    
+                    <!-- Описание с кнопкой "больше/меньше" на чистом CSS -->
+                    <div class="description-wrapper">
+                        <input type="checkbox" id="desc-toggle" class="desc-checkbox">
+                        <p class="service-description line-clamp">
+                            {{service.description}}
+                        </p>
+                        <label for="desc-toggle" class="toggle-description" data-more="Больше" data-less="Меньше"></label>
+                    </div>
+
+                    <div class="service-details">
+                        <span class="detail-item">💰 {{service.price}} руб/м²</span>
+                        <span class="detail-item">📐 {{service.area}} м²</span>
+                        <span class="detail-item">🏷️ {{service.category}}</span>
+                    </div>
                 </div>
 
-                <div class="service-details">
-                    <span class="detail-item">💰 {{service.price}} руб/м²</span>
-                    <span class="detail-item">📐 {{service.area}} м²</span>
-                    <span class="detail-item">🏷️ {{service.category}}</span>
+                <!-- Правая часть: Лайки и Следующий (в стиле TikTok) -->
+                <div class="feed-sidebar">
+                    <!-- Лайки -->
+                    <div class="sidebar-item">
+                        <div class="sidebar-icon">❤️</div>
+                        <span class="sidebar-text">{{likesCount}}</span>
+                    </div>
+                    
+                    <!-- Кнопка Далее -->
+                    <a href="/construction/feed?id={{service.id}}&next=true" class="sidebar-item next-btn">
+                        <div class="sidebar-icon">⬇️</div>
+                        <span class="sidebar-text">Далее</span>
+                    </a>
                 </div>
-                <div class="service-actions">
-                    <span class="likes-count">❤️ {{likesCount}}</span>
-                    <a href="/construction/feed?id={{service.id}}&next=true" class="next-button">Следующий →</a>
-                </div>
+
             </div>
         </div>
     {{else}}
         <div class="empty-state"><p>Нет доступных услуг</p></div>
     {{/if}}
 </div>
-
-<script>
-    // JavaScript для кнопки "больше/меньше"
-    let isExpanded = false;
-    const fullText = "{{service.description}}";
-    const shortText = fullText.length > 60 ? fullText.substring(0, 60) + '...' : fullText;
-
-    function toggleDescription() {
-        const desc = document.getElementById('descText');
-        const btn = document.querySelector('.toggle-description');
-        if (!isExpanded) {
-            desc.textContent = fullText;
-            btn.textContent = 'Меньше';
-            isExpanded = true;
-        } else {
-            desc.textContent = shortText;
-            btn.textContent = 'Больше';
-            isExpanded = false;
-        }
-    }
-
-    // Инициализация — показываем короткий текст
-    document.addEventListener('DOMContentLoaded', function() {
-        const desc = document.getElementById('descText');
-        const btn = document.querySelector('.toggle-description');
-        if (desc && btn) {
-            if (fullText.length <= 60) {
-                btn.style.display = 'none';
-            } else {
-                desc.textContent = shortText;
-                btn.textContent = 'Больше';
-            }
-        }
-    });
-</script>
 {{/layout}}
