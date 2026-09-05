@@ -347,13 +347,7 @@ body {
 }
 
 .search-bar:focus-within {
-    border-color: #256BF3; /* Подсветка всей строки поиска при клике */
-}
-
-.search-icon {
-    font-size: 16px;
-    margin-right: 8px;
-    opacity: 0.7;
+    border-color: #256BF3; 
 }
 
 .search-input {
