@@ -24,14 +24,15 @@
 
     <div class="services-grid">
         {{#each services}}
-            <div class="service-card" onclick="window.location.href='/construction/feed?id={{this.id}}'">
+            <!-- ИСПОЛЬЗУЕМ ТЕГ <a> ДЛЯ ПЕРЕХОДА БЕЗ JAVASCRIPT -->
+            <a href="/construction/feed?id={{this.id}}" class="service-card" style="text-decoration: none; display: block;">
                 <img src="http://localhost:9000/construction-assets/{{this.imageUrl}}" class="card-image">
                 <div class="card-content">
                     <h3 class="card-title">{{this.title}}</h3>
                     <div class="card-price">{{this.price}} руб/м²</div>
                     <div class="card-likes">❤️ {{this.likesCount}}</div>
                 </div>
-            </div>
+            </a>
         {{else}}
             <p class="empty-message">Нет услуг по фильтру</p>
         {{/each}}
