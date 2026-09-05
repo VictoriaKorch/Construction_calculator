@@ -11,16 +11,16 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Жесткая высота для предотвращения сдвигов окна */
+    height: 100vh; 
     margin: 0;
-    overflow: hidden; /* Скрываем системный скроллбар браузера */
+    overflow: hidden; 
 }
 
 /* ===== КОНТЕЙНЕР ===== */
 .app-container {
     width: 100%;
     max-width: 420px;
-    height: 100vh; /* Жесткая высота вместо min-height */
+    height: 100vh; 
     background: #F1F3F5; 
     display: flex;
     flex-direction: column;
@@ -30,23 +30,20 @@ body {
 
 .main-content {
     flex: 1;
-    overflow-y: auto; /* Прокрутка работает как раньше */
+    overflow-y: auto; 
     padding-bottom: 60px;
     
-    /* Скрываем скроллбар в Firefox */
     scrollbar-width: none; 
-    /* Скрываем скроллбар в IE и старом Edge */
     -ms-overflow-style: none; 
 }
 
-/* Скрываем скроллбар в Chrome, Safari, Яндекс.Браузере и новом Edge */
 .main-content::-webkit-scrollbar {
     display: none; 
 }
 
 /* ===== НИЖНЯЯ ПАНЕЛЬ ===== */
 .bottom-nav {
-    position: absolute; /* absolute или fixed внутри контейнера работает отлично */
+    position: absolute; 
     bottom: 0;
     left: 0;
     width: 100%;
@@ -106,7 +103,6 @@ body {
     color: #FFFFFF;
     pointer-events: none;
     
-    /* Flex-структура для разделения контента и сайдбара */
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -116,7 +112,6 @@ body {
     pointer-events: auto;
 }
 
-/* Левая часть с текстом */
 .feed-content {
     flex: 1;
     padding-right: 16px;
@@ -125,59 +120,16 @@ body {
 .service-title {
     font-size: 22px;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
-
-/* ЧИСТЫЙ CSS ДЛЯ КНОПКИ БОЛЬШЕ/МЕНЬШЕ */
-.desc-checkbox {
-    display: none;
-}
-
-.service-description {
-    font-size: 15px;
-    opacity: 0.95;
-    margin-bottom: 4px;
-    line-height: 1.4;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
-    transition: all 0.3s ease;
-}
-
-.line-clamp {
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Количество строк до обрезки */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.desc-checkbox:checked ~ .service-description {
-    -webkit-line-clamp: unset;
-}
-
-.toggle-description {
-    display: inline-block;
-    color: #FFFFFF;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 12px;
-    opacity: 0.8;
-}
-
-.toggle-description::after {
-    content: attr(data-more);
-}
-
-.desc-checkbox:checked ~ .toggle-description::after {
-    content: attr(data-less);
-}
-/* КОНЕЦ CSS-ЛОГИКИ БОЛЬШЕ/МЕНЬШЕ */
 
 .service-details {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     font-size: 13px;
+    margin-bottom: 14px;
 }
 
 .detail-item {
@@ -187,6 +139,61 @@ body {
     backdrop-filter: blur(4px);
     font-weight: 500;
     border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ЧИСТЫЙ CSS ДЛЯ КНОПКИ БОЛЬШЕ/МЕНЬШЕ */
+.desc-checkbox {
+    display: none;
+}
+
+.description-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.service-description {
+    font-size: 15px;
+    opacity: 0.95;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+.main-text {
+    margin: 0;
+}
+
+.extra-text {
+    display: none; 
+    margin-top: 8px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 10px;
+    border-radius: 6px;
+    border-left: 2px solid #256BF3;
+}
+
+.desc-checkbox:checked ~ .service-description .extra-text {
+    display: block; 
+}
+
+.toggle-description {
+    display: inline-block;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.toggle-description::after {
+    content: attr(data-more);
+}
+
+.desc-checkbox:checked ~ .toggle-description::after {
+    content: attr(data-less);
 }
 
 /* Правая часть (Сайдбар как в TikTok) */
@@ -256,7 +263,7 @@ body {
     margin-bottom: 24px;
 }
 
-.field-card, .media-card, .filter-form, .service-card {
+.field-card, .media-card, .service-card {
     background: #FFFFFF;
     border-radius: 12px;
     margin-bottom: 16px;
@@ -323,68 +330,87 @@ body {
     padding: 40px 20px;
 }
 
-/* ===== ПЛИТКА ===== */
-.filter-form {
-    padding: 16px;
+/* ===== ПЛИТКА (Обновленный фильтр) ===== */
+.search-form {
     margin-bottom: 24px;
 }
 
-.filter-group {
+.search-bar {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 12px;
-}
-
-.filter-group label {
-    font-weight: 600;
-    font-size: 14px;
-    color: #1A1A1A;
-}
-
-.filter-group input {
-    flex: 1;
-    min-width: 120px;
-    padding: 10px 12px;
-    border: 1px solid #D1D5DB;
-    border-radius: 8px;
-    font-size: 15px;
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 6px 6px 6px 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid transparent;
     transition: border-color 0.2s;
 }
 
-.filter-group input:focus {
-    border-color: #256BF3;
+.search-bar:focus-within {
+    border-color: #256BF3; /* Подсветка всей строки поиска при клике */
+}
+
+.search-icon {
+    font-size: 16px;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1A1A1A;
+    padding: 8px 0;
+    min-width: 0; 
+}
+
+.search-input:focus {
     outline: none;
 }
 
-.btn {
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    text-align: center;
-    transition: background 0.2s ease;
+.search-input::placeholder {
+    color: #9CA3AF;
+    font-weight: 400;
 }
 
-.btn-primary {
+.search-btn {
     background: #256BF3;
     color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin-left: 8px;
 }
 
-.btn-primary:hover {
+.search-btn:hover {
     background: #1556D6;
 }
 
-.btn-secondary {
-    background: #E5E7EB;
-    color: #1A1A1A;
+.clear-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin-left: 8px;
+    background: #F3F4F6;
+    color: #6B7280;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s ease;
 }
 
-.btn-secondary:hover {
-    background: #D1D5DB;
+.clear-btn:hover {
+    background: #E5E7EB;
+    color: #1A1A1A;
 }
 
 /* Сетка карточек */

@@ -17,31 +17,32 @@
                 <div class="feed-content">
                     <h2 class="service-title">{{service.title}}</h2>
                     
-                    <!-- Описание с кнопкой "больше/меньше" на чистом CSS -->
+                    <!-- Плашки с цифрами под названием (без категории) -->
+                    <div class="service-details">
+                        <span class="detail-item">{{service.price}} руб/м²</span>
+                        <span class="detail-item">{{service.area}} м²</span>
+                    </div>
+                    
+                    <!-- Описание с кнопкой "больше/меньше" внизу -->
                     <div class="description-wrapper">
                         <input type="checkbox" id="desc-toggle" class="desc-checkbox">
-                        <p class="service-description line-clamp">
-                            {{service.description}}
-                        </p>
+                        <div class="service-description">
+                            <p class="main-text">{{service.description}}</p>
+                            <!-- Дополнительный тематический текст (скрыт по умолчанию) -->
+                            <p class="extra-text">В расчет укрупненного показателя стоимости включены: базовые строительно-монтажные работы (СМР), устройство фундамента и подведение наружных инженерных сетей до границы участка.</p>
+                        </div>
+                        <!-- Сама кнопка -->
                         <label for="desc-toggle" class="toggle-description" data-more="Больше" data-less="Меньше"></label>
-                    </div>
-
-                    <div class="service-details">
-                        <span class="detail-item">💰 {{service.price}} руб/м²</span>
-                        <span class="detail-item">📐 {{service.area}} м²</span>
-                        <span class="detail-item">🏷️ {{service.category}}</span>
                     </div>
                 </div>
 
-                <!-- Правая часть: Лайки и Следующий (в стиле TikTok) -->
+                <!-- Правая часть: Лайки и Следующий -->
                 <div class="feed-sidebar">
-                    <!-- Лайки -->
                     <div class="sidebar-item">
                         <div class="sidebar-icon">❤️</div>
                         <span class="sidebar-text">{{likesCount}}</span>
                     </div>
                     
-                    <!-- Кнопка Далее -->
                     <a href="/construction/feed?id={{service.id}}&next=true" class="sidebar-item next-btn">
                         <div class="sidebar-icon">⬇️</div>
                         <span class="sidebar-text">Далее</span>
