@@ -23,13 +23,18 @@ export class ConstructionController {
     }
 
     if (!service) {
-      return { title: 'Лента', service: null };
+      return { 
+        title: 'Лента', 
+        service: null, 
+        navFeedActive: true // Флажок для подсветки активной вкладки
+      };
     }
 
     return {
       title: 'Лента строительных проектов',
       service: service,
       likesCount: service.likes.length,
+      navFeedActive: true // Флажок для подсветки активной вкладки
     };
   }
 
@@ -41,6 +46,7 @@ export class ConstructionController {
     return {
       title: 'Добавление проекта',
       service: draft,
+      navAddActive: true // Флажок для подсветки активной вкладки
     };
   }
 
@@ -50,10 +56,13 @@ export class ConstructionController {
   getTilePage(@Query('filterPrice') filterPrice?: string) {
     let services = this.constructionService.getAllServices();
 
+    // СЕРВЕРНАЯ ФИЛЬТРАЦИЯ: Оставляем только опубликованные проекты (убираем черновики)
+    services = services.filter(s => s.status === 'published');
+
     if (filterPrice) {
       const maxPrice = Number(filterPrice);
       if (!isNaN(maxPrice)) {
-        services = this.constructionService.filterByPrice(maxPrice);
+        services = services.filter(s => s.price <= maxPrice);
       }
     }
 
@@ -66,6 +75,7 @@ export class ConstructionController {
       title: 'Список проектов',
       services: servicesWithLikes,
       currentFilter: filterPrice || '',
+      navTileActive: true // Флажок для подсветки активной вкладки
     };
   }
 }

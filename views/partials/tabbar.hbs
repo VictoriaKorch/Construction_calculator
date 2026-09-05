@@ -1,6 +1,6 @@
 <!-- views/partials/tabbar.hbs -->
 <nav class="bottom-nav">
-    <a href="/construction/feed" class="nav-item">Лента</a>
-    <a href="/construction/add" class="nav-item">Добавить</a>
-    <a href="/construction/tile" class="nav-item">Плитка</a>
+    <a href="/construction/feed" class="nav-item {{#if navFeedActive}}active{{/if}}">Лента</a>
+    <a href="/construction/add" class="nav-item {{#if navAddActive}}active{{/if}}">Добавить</a>
+    <a href="/construction/tile" class="nav-item {{#if navTileActive}}active{{/if}}">Плитка</a>
 </nav>

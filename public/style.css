@@ -64,8 +64,10 @@ body {
     transition: color 0.2s ease;
 }
 
+/* Обновленный класс для наведения и активной страницы */
 .nav-item:hover, .nav-item.active {
     color: #256BF3; 
+    font-weight: 600; /* Делаем текст жирнее на активной вкладке */
 }
 
 /* ===== ЛЕНТА (TikTok Style) ===== */
