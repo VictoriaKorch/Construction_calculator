@@ -15,16 +15,16 @@ body {
     margin: 0;
 }
 
-/* ===== КОНТЕЙНЕР (Прямоугольный, уменьшенная высота) ===== */
+/* ===== КОНТЕЙНЕР ===== */
 .app-container {
-    width: 340px;          /* Оптимальная ширина для монитора */
-    height: 680px;         /* Уменьшенная высота, чтобы нижняя панель всегда была в кадре */
-    background: #F1F3F5; 
+    width: 340px;          
+    height: 680px;         
+    background: #fff; /* По умолчанию белый фон для Ленты и Плитки */
     display: flex;
     flex-direction: column;
     position: relative;
     box-shadow: 0 10px 40px rgba(0,0,0,0.15); 
-    border-radius: 0;      /* Убраны скругления краев */
+    border-radius: 0;      
     overflow: hidden;      
 }
 
@@ -47,17 +47,17 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    background: #FFFFFF;
+    background: #fff;
     display: flex;
     justify-content: space-around;
     padding: 10px 0 14px 0;
-    border-top: 1px solid #E5E7EB;
+    border-top: 1px solid #e8e9ec; /* --gray10_100 */
     z-index: 100;
 }
 
 .nav-item {
     text-decoration: none;
-    color: #6B7280;
+    color: #737a8e; /* --gray60_100 */
     font-size: 11px;
     font-weight: 500;
     padding: 4px 14px;
@@ -68,7 +68,7 @@ body {
 .bottom-nav a.active,
 .nav-item:hover, 
 .nav-item.active {
-    color: #256BF3 !important; 
+    color: #0468ff !important; /* --primary_100 */
     font-weight: 600; 
 }
 
@@ -104,7 +104,7 @@ body {
     right: 0;
     padding: 16px 14px 70px 14px; 
     background: linear-gradient(transparent, rgba(0,0,0,0.85));
-    color: #FFFFFF;
+    color: #fff;
     pointer-events: none;
     
     display: flex;
@@ -145,7 +145,6 @@ body {
     border: 1px solid rgba(255,255,255,0.2);
 }
 
-/* ЧИСТЫЙ CSS ДЛЯ КНОПКИ БОЛЬШЕ/МЕНЬШЕ */
 .desc-checkbox {
     display: none;
 }
@@ -176,7 +175,7 @@ body {
     background: rgba(255, 255, 255, 0.1);
     padding: 8px 10px;
     border-radius: 6px;
-    border-left: 2px solid #256BF3;
+    border-left: 2px solid #0468ff; /* --primary_100 */
 }
 
 .desc-checkbox:checked ~ .service-description .extra-text {
@@ -185,7 +184,7 @@ body {
 
 .toggle-description {
     display: inline-block;
-    color: #FFFFFF;
+    color: #fff;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -214,7 +213,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    color: #FFFFFF;
+    color: #fff;
     text-decoration: none;
     cursor: pointer;
 }
@@ -248,42 +247,40 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    color: #6B7280;
+    color: #737a8e; /* --gray60_100 */
     font-size: 14px;
     padding: 20px;
     text-align: center;
-    background: #F1F3F5;
+    background: #f1f2f4; /* --gray6_100 */
 }
 
-/* ===== ДОБАВЛЕНИЕ И ПЛИТКА (Общие стили карточек) ===== */
-.add-container, .tile-container {
+/* ===== ДОБАВЛЕНИЕ (2 страница) ===== */
+.add-container {
     padding: 24px 16px 20px 16px; 
+    background: #f1f2f4; /* Фирменный серый ЦИАН для 2 страницы */
+    min-height: 100%;
 }
 
-.page-title, .tile-title {
+.page-title {
     font-size: 20px;
     font-weight: 700;
-    color: #1A1A1A;
+    color: #152242; /* --black_100 */
     margin-bottom: 20px;
 }
 
-.field-card, .media-card, .service-card {
-    background: #FFFFFF;
+.field-card {
+    background: #fff;
     border-radius: 10px;
     margin-bottom: 14px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
-}
-
-/* ===== ДОБАВЛЕНИЕ ===== */
-.field-card {
     padding: 14px;
+    box-shadow: 0 2px 8px rgba(21, 34, 66, 0.06); 
 }
 
 .field-card label {
     display: block;
     font-weight: 600;
     font-size: 11px;
-    color: #6B7280;
+    color: #737a8e; /* --gray60_100 */
     margin-bottom: 5px;
 }
 
@@ -293,17 +290,17 @@ body {
     width: 100%;
     padding: 8px 0;
     border: none;
-    border-bottom: 1px solid #E5E7EB;
+    border-bottom: 1px solid #e8e9ec; /* --gray10_100 */
     font-size: 14px;
     font-weight: 500;
-    color: #1A1A1A;
+    color: #152242; /* --black_100 */
     background: transparent;
     transition: border-color 0.2s ease;
 }
 
 .field-card input:focus,
 .field-card textarea:focus {
-    border-bottom-color: #256BF3; 
+    border-bottom-color: #0468ff; /* --primary_100 */
     outline: none;
 }
 
@@ -314,6 +311,7 @@ body {
 
 .media-card {
     overflow: hidden;
+    border-radius: 10px;
 }
 
 .preview-image, .preview-video {
@@ -329,12 +327,26 @@ body {
 
 .empty-message {
     text-align: center;
-    color: #6B7280;
+    color: #737a8e; /* --gray60_100 */
     font-size: 13px;
     padding: 30px 16px;
 }
 
-/* ===== ПЛИТКА (Обновленный фильтр) ===== */
+/* ===== ПЛИТКА (3 страница - поиск и карточки) ===== */
+.tile-container {
+    padding: 24px 16px 20px 16px; 
+    background: #fff; /* Чисто белый фон по референсу */
+    min-height: 100%;
+}
+
+.tile-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #152242; /* --black_100 */
+    margin-bottom: 20px;
+}
+
+/* Новый стиль строки поиска по референсу */
 .search-form {
     margin-bottom: 20px;
 }
@@ -342,16 +354,11 @@ body {
 .search-bar {
     display: flex;
     align-items: center;
-    background: #FFFFFF;
-    border-radius: 10px;
-    padding: 5px 5px 5px 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    border: 1px solid transparent;
-    transition: border-color 0.2s;
-}
-
-.search-bar:focus-within {
-    border-color: #256BF3; 
+    background: #fff;
+    border-radius: 12px;
+    border: 3px solid #0468ff; /* Обводка 3px */
+    padding: 0; 
+    overflow: hidden; 
 }
 
 .search-input {
@@ -360,8 +367,8 @@ body {
     background: transparent;
     font-size: 13px;
     font-weight: 500;
-    color: #1A1A1A;
-    padding: 6px 0;
+    color: #152242; /* --black_100 */
+    padding: 10px 14px;
     min-width: 0; 
 }
 
@@ -370,25 +377,27 @@ body {
 }
 
 .search-input::placeholder {
-    color: #9CA3AF;
+    color: #a1a7b3; /* --gray40_100 */
     font-weight: 400;
 }
 
 .search-btn {
-    background: #256BF3;
-    color: #FFFFFF;
+    background: #0468ff; /* --primary_100 */
+    color: #fff;
     border: none;
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 12px;
+    height: 40px;
+    padding: 0 16px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s ease;
-    margin-left: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .search-btn:hover {
-    background: #1556D6;
+    background: #0661ec; /* --fill_primary_hover_100 */
 }
 
 .clear-btn {
@@ -397,9 +406,9 @@ body {
     justify-content: center;
     width: 28px;
     height: 28px;
-    margin-left: 6px;
-    background: #F3F4F6;
-    color: #6B7280;
+    margin-right: 6px;
+    background: #f1f2f4; /* --gray6_100 */
+    color: #737a8e; /* --gray60_100 */
     border-radius: 6px;
     text-decoration: none;
     font-size: 12px;
@@ -407,8 +416,8 @@ body {
 }
 
 .clear-btn:hover {
-    background: #E5E7EB;
-    color: #1A1A1A;
+    background: #e8e9ec; /* --gray10_100 */
+    color: #152242; /* --black_100 */
 }
 
 /* Сетка карточек */
@@ -421,11 +430,11 @@ body {
 .service-card {
     transition: box-shadow 0.3s ease; 
     cursor: pointer;
-    overflow: hidden;
+    background: #fff;
 }
 
 .service-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    opacity: 0.9;
 }
 
 /* Скрываем все карточки со статусом "черновик" */
@@ -438,17 +447,19 @@ body {
     width: 100%;
     height: 110px;
     object-fit: cover;
-    background: #E5E7EB;
+    background: #f1f2f4; /* --gray6_100 */
+    border-radius: 12px; 
+    margin-bottom: 8px;
 }
 
 .card-content {
-    padding: 10px;
+    padding: 0 4px; 
 }
 
 .card-title {
     font-size: 12px;
-    font-weight: 600;
-    color: #1A1A1A;
+    font-weight: 400; /* Стандартная толщина */
+    color: #152242;   /* --black_100 */
     margin-bottom: 4px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -458,14 +469,14 @@ body {
 }
 
 .card-price {
-    font-size: 14px;
-    color: #1A1A1A;
-    font-weight: 700; 
+    font-size: 15px;
+    color: #152242; /* --black_100 */
+    font-weight: 600; 
     margin-bottom: 4px;
 }
 
 .card-likes {
     font-size: 11px;
-    color: #6B7280;
+    color: #737a8e; /* --gray60_100 */
     font-weight: 500;
 }
