@@ -11,27 +11,27 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; 
+    min-height: 100vh; 
     margin: 0;
-    overflow: hidden; 
 }
 
-/* ===== КОНТЕЙНЕР ===== */
+/* ===== КОНТЕЙНЕР (Прямоугольный, уменьшенная высота) ===== */
 .app-container {
-    width: 100%;
-    max-width: 420px;
-    height: 100vh; 
+    width: 340px;          /* Оптимальная ширина для монитора */
+    height: 680px;         /* Уменьшенная высота, чтобы нижняя панель всегда была в кадре */
     background: #F1F3F5; 
     display: flex;
     flex-direction: column;
     position: relative;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15); 
+    border-radius: 0;      /* Убраны скругления краев */
+    overflow: hidden;      
 }
 
 .main-content {
     flex: 1;
     overflow-y: auto; 
-    padding-bottom: 60px;
+    padding-bottom: 56px;
     
     scrollbar-width: none; 
     -ms-overflow-style: none; 
@@ -50,7 +50,7 @@ body {
     background: #FFFFFF;
     display: flex;
     justify-content: space-around;
-    padding: 12px 0 16px 0;
+    padding: 10px 0 14px 0;
     border-top: 1px solid #E5E7EB;
     z-index: 100;
 }
@@ -58,16 +58,18 @@ body {
 .nav-item {
     text-decoration: none;
     color: #6B7280;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 500;
-    padding: 4px 16px;
+    padding: 4px 14px;
     transition: color 0.2s ease;
 }
 
-/* Обновленный класс для наведения и активной страницы */
-.nav-item:hover, .nav-item.active {
-    color: #256BF3; 
-    font-weight: 600; /* Делаем текст жирнее на активной вкладке */
+/* Фиксируем синий цвет для активной вкладки внизу */
+.bottom-nav a.active,
+.nav-item:hover, 
+.nav-item.active {
+    color: #256BF3 !important; 
+    font-weight: 600; 
 }
 
 /* ===== ЛЕНТА (TikTok Style) ===== */
@@ -100,7 +102,7 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 20px 16px 80px 16px; 
+    padding: 16px 14px 70px 14px; 
     background: linear-gradient(transparent, rgba(0,0,0,0.85));
     color: #FFFFFF;
     pointer-events: none;
@@ -116,28 +118,28 @@ body {
 
 .feed-content {
     flex: 1;
-    padding-right: 16px;
+    padding-right: 14px;
 }
 
 .service-title {
-    font-size: 22px;
+    font-size: 16px; 
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
 .service-details {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    font-size: 13px;
-    margin-bottom: 14px;
+    gap: 6px;
+    font-size: 11px;
+    margin-bottom: 12px;
 }
 
 .detail-item {
     background: rgba(0, 0, 0, 0.4);
-    padding: 6px 12px;
-    border-radius: 8px;
+    padding: 5px 10px;
+    border-radius: 7px;
     backdrop-filter: blur(4px);
     font-weight: 500;
     border: 1px solid rgba(255,255,255,0.2);
@@ -155,9 +157,9 @@ body {
 }
 
 .service-description {
-    font-size: 15px;
+    font-size: 13px;
     opacity: 0.95;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     line-height: 1.4;
     text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
@@ -168,8 +170,8 @@ body {
 
 .extra-text {
     display: none; 
-    margin-top: 8px;
-    font-size: 13px;
+    margin-top: 6px;
+    font-size: 12px;
     color: rgba(255, 255, 255, 0.85);
     background: rgba(255, 255, 255, 0.1);
     padding: 8px 10px;
@@ -184,7 +186,7 @@ body {
 .toggle-description {
     display: inline-block;
     color: #FFFFFF;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     opacity: 0.8;
@@ -203,30 +205,30 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    padding-bottom: 10px;
+    gap: 16px;
+    padding-bottom: 8px;
 }
 
 .sidebar-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     color: #FFFFFF;
     text-decoration: none;
     cursor: pointer;
 }
 
 .sidebar-icon {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     background: rgba(255,255,255,0.2);
     backdrop-filter: blur(4px);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 22px;
+    font-size: 18px;
     transition: background 0.2s ease;
     border: 1px solid rgba(255,255,255,0.1);
 }
@@ -236,7 +238,7 @@ body {
 }
 
 .sidebar-text {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
     text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
@@ -247,7 +249,7 @@ body {
     align-items: center;
     height: 100vh;
     color: #6B7280;
-    font-size: 16px;
+    font-size: 14px;
     padding: 20px;
     text-align: center;
     background: #F1F3F5;
@@ -255,44 +257,44 @@ body {
 
 /* ===== ДОБАВЛЕНИЕ И ПЛИТКА (Общие стили карточек) ===== */
 .add-container, .tile-container {
-    padding: 20px 16px;
+    padding: 24px 16px 20px 16px; 
 }
 
 .page-title, .tile-title {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     color: #1A1A1A;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .field-card, .media-card, .service-card {
     background: #FFFFFF;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+    border-radius: 10px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
 }
 
 /* ===== ДОБАВЛЕНИЕ ===== */
 .field-card {
-    padding: 16px;
+    padding: 14px;
 }
 
 .field-card label {
     display: block;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 11px;
     color: #6B7280;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
 }
 
 .field-card input,
 .field-card textarea,
 .field-card select {
     width: 100%;
-    padding: 10px 0;
+    padding: 8px 0;
     border: none;
     border-bottom: 1px solid #E5E7EB;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     color: #1A1A1A;
     background: transparent;
@@ -307,7 +309,7 @@ body {
 
 .field-card textarea {
     resize: vertical;
-    min-height: 80px;
+    min-height: 70px;
 }
 
 .media-card {
@@ -321,29 +323,29 @@ body {
 }
 
 .preview-video {
-    max-height: 250px;
+    max-height: 200px;
     background: #000;
 }
 
 .empty-message {
     text-align: center;
     color: #6B7280;
-    font-size: 15px;
-    padding: 40px 20px;
+    font-size: 13px;
+    padding: 30px 16px;
 }
 
 /* ===== ПЛИТКА (Обновленный фильтр) ===== */
 .search-form {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .search-bar {
     display: flex;
     align-items: center;
     background: #FFFFFF;
-    border-radius: 12px;
-    padding: 6px 6px 6px 14px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    padding: 5px 5px 5px 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     border: 1px solid transparent;
     transition: border-color 0.2s;
 }
@@ -356,10 +358,10 @@ body {
     flex: 1;
     border: none;
     background: transparent;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 500;
     color: #1A1A1A;
-    padding: 8px 0;
+    padding: 6px 0;
     min-width: 0; 
 }
 
@@ -376,13 +378,13 @@ body {
     background: #256BF3;
     color: #FFFFFF;
     border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 14px;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s ease;
-    margin-left: 8px;
+    margin-left: 6px;
 }
 
 .search-btn:hover {
@@ -393,14 +395,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
-    margin-left: 8px;
+    width: 28px;
+    height: 28px;
+    margin-left: 6px;
     background: #F3F4F6;
     color: #6B7280;
-    border-radius: 8px;
+    border-radius: 6px;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 12px;
     transition: background 0.2s ease;
 }
 
@@ -413,7 +415,7 @@ body {
 .services-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 12px;
 }
 
 .service-card {
@@ -426,22 +428,28 @@ body {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
+/* Скрываем все карточки со статусом "черновик" */
+.tile-card[data-status="черновик"],
+.tile-card[data-status="draft"] {
+    display: none !important;
+}
+
 .card-image {
     width: 100%;
-    height: 130px;
+    height: 110px;
     object-fit: cover;
     background: #E5E7EB;
 }
 
 .card-content {
-    padding: 12px;
+    padding: 10px;
 }
 
 .card-title {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     color: #1A1A1A;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -450,22 +458,14 @@ body {
 }
 
 .card-price {
-    font-size: 16px;
+    font-size: 14px;
     color: #1A1A1A;
     font-weight: 700; 
     margin-bottom: 4px;
 }
 
 .card-likes {
-    font-size: 13px;
+    font-size: 11px;
     color: #6B7280;
     font-weight: 500;
-}
-
-/* ===== АДАПТИВНОСТЬ ===== */
-@media (max-width: 440px) {
-    .app-container {
-        max-width: 100%;
-        box-shadow: none;
-    }
 }
