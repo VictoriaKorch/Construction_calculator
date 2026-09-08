@@ -400,6 +400,7 @@ body {
     background: #0661ec; /* --fill_primary_hover_100 */
 }
 
+/* Иконка сброса (Крестик) без серого квадрата */
 .clear-btn {
     display: flex;
     align-items: center;
@@ -407,17 +408,16 @@ body {
     width: 28px;
     height: 28px;
     margin-right: 6px;
-    background: #f1f2f4; /* --gray6_100 */
+    background: transparent; /* Убрали серый фон */
     color: #737a8e; /* --gray60_100 */
-    border-radius: 6px;
     text-decoration: none;
-    font-size: 12px;
-    transition: background 0.2s ease;
+    font-size: 14px; /* Чуть увеличили сам крестик */
+    transition: color 0.2s ease;
 }
 
 .clear-btn:hover {
-    background: #e8e9ec; /* --gray10_100 */
-    color: #152242; /* --black_100 */
+    background: transparent; /* Без фона при наведении */
+    color: #152242; /* --black_100 - цвет иконки становится темнее */
 }
 
 /* Сетка карточек */
