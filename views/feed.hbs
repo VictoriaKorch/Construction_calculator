@@ -11,45 +11,43 @@
                 loop 
                 playsinline>
             </video>
+
+            <!-- Правая боковая панель (Лайки, Следующий) теперь по центру справа -->
+            <div class="feed-sidebar">
+                <div class="sidebar-item">
+                    <div class="sidebar-icon">❤️</div>
+                    <span class="sidebar-text">{{likesCount}}</span>
+                </div>
+                <a href="/construction/feed?id={{service.id}}&next=true" class="sidebar-item next-btn">
+                    <div class="sidebar-icon">↓</div>
+                    <span class="sidebar-text">Далее</span>
+                </a>
+            </div>
+
             <div class="video-overlay">
-                
-                <!-- Левая/Нижняя часть: Текст и теги -->
                 <div class="feed-content">
-                    <h2 class="service-title">{{service.title}}</h2>
                     
-                    <!-- Плашки с цифрами под названием (без категории) -->
-                    <div class="service-details">
-                        <span class="detail-item">{{service.price}} руб/м²</span>
-                        <span class="detail-item">{{service.area}} м²</span>
+                    <!-- Верхний блок с названием слева и параметрами справа (друг под другом) -->
+                    <div class="title-row">
+                        <h2 class="service-title">{{service.title}}</h2>
+                        <div class="service-details">
+                            <span class="detail-item">{{service.price}} руб/м²</span>
+                            <span class="detail-item">{{service.area}} м²</span>
+                        </div>
                     </div>
                     
-                    <!-- Описание с кнопкой "больше/меньше" внизу -->
+                    <!-- Описание на всю ширину с 2 строками и кнопкой Еще -->
                     <div class="description-wrapper">
                         <input type="checkbox" id="desc-toggle" class="desc-checkbox">
+                        
+                        <!-- Единый текст (без деления на куски). Вторая часть приклеена к описанию -->
                         <div class="service-description">
-                            <p class="main-text">{{service.description}}</p>
-                            <!-- Дополнительный тематический текст (скрыт по умолчанию) -->
-                            <p class="extra-text">В расчет укрупненного показателя стоимости включены: базовые строительно-монтажные работы (СМР), устройство фундамента и подведение наружных инженерных сетей до границы участка.</p>
+                            {{service.description}} В расчет укрупненного показателя стоимости включены: базовые строительно-монтажные работы (СМР), устройство фундамента и подведение наружных инженерных сетей до границы участка.
                         </div>
-                        <!-- Сама кнопка -->
-                        <label for="desc-toggle" class="toggle-description" data-more="Больше" data-less="Меньше"></label>
+                        
+                        <label for="desc-toggle" class="toggle-description" data-more="Еще" data-less="Скрыть"></label>
                     </div>
                 </div>
-
-                <!-- Правая часть: Лайки и Следующий -->
-                <div class="feed-sidebar">
-                    <div class="sidebar-item">
-                        <div class="sidebar-icon">❤️</div>
-                        <span class="sidebar-text">{{likesCount}}</span>
-                    </div>
-                    
-                    <!-- Кнопка "Следующий" с обычной текстовой стрелкой -->
-                    <a href="/construction/feed?id={{service.id}}&next=true" class="sidebar-item next-btn">
-                        <div class="sidebar-icon">↓</div>
-                        <span class="sidebar-text">Следующий</span>
-                    </a>
-                </div>
-
             </div>
         </div>
     {{else}}

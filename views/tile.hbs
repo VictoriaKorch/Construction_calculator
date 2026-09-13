@@ -3,28 +3,33 @@
 <div class="tile-container">
     <h1 class="tile-title">Укрупненные показатели стоимости</h1>
     
-    <!-- Компактная строка фильтрации -->
-    <form class="search-form" action="/construction/tile" method="GET">
-        <div class="search-bar">
+    <form class="search-form slider-form" action="/construction/tile" method="GET">
+        <div class="slider-header">
+            <label for="price-slider">
+                Максимальная цена: 
+                <b>{{#if currentFilter}}{{currentFilter}}{{else}}150000{{/if}} руб/м²</b>
+            </label>
+        </div>
+
+        <div class="search-bar slider-bar">
+            <span class="slider-bound">0</span>
             <input 
-                type="number" 
+                type="range" 
+                id="price-slider"
                 name="filterPrice" 
-                value="{{currentFilter}}" 
-                placeholder="Макс. цена за м²..." 
-                class="search-input"
+                min="0"
+                max="150000"
+                step="5000"
+                value="{{#if currentFilter}}{{currentFilter}}{{else}}150000{{/if}}" 
+                class="search-slider"
             >
+            <span class="slider-bound">150k</span>
             <button type="submit" class="search-btn">Найти</button>
-            
-            <!-- Крестик сброса появляется только если есть текущий фильтр -->
-            {{#if currentFilter}}
-                <a href="/construction/tile" class="clear-btn" title="Сбросить фильтр">✕</a>
-            {{/if}}
         </div>
     </form>
 
     <div class="services-grid">
         {{#each services}}
-            <!-- ИСПОЛЬЗУЕМ ТЕГ <a> ДЛЯ ПЕРЕХОДА БЕЗ JAVASCRIPT -->
             <a href="/construction/feed?id={{this.id}}" class="service-card" style="text-decoration: none; display: block;">
                 <img src="http://localhost:9000/construction-assets/{{this.imageUrl}}" class="card-image">
                 <div class="card-content">

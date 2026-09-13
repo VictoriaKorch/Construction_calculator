@@ -3,51 +3,46 @@
 <div class="add-container">
     <h1 class="page-title">Редактирование черновика</h1>
     {{#if service}}
-        <form class="add-form" action="#" method="GET">
-            <!-- Карточка: Название -->
+        <form class="add-form" action="#" method="POST" enctype="multipart/form-data">
+            
             <div class="field-card">
-                <label>Название проекта</label>
-                <input type="text" value="{{service.title}}">
-            </div>
-
-            <!-- Карточка: Описание -->
-            <div class="field-card">
-                <label>Описание</label>
-                <textarea>{{service.description}}</textarea>
-            </div>
-
-            <!-- Карточка: Цена -->
-            <div class="field-card">
-                <label>Цена (руб/м²)</label>
-                <input type="number" value="{{service.price}}">
-            </div>
-
-            <!-- Карточка: Площадь -->
-            <div class="field-card">
-                <label>Площадь (м²)</label>
-                <input type="number" value="{{service.area}}">
-            </div>
-
-            <!-- Карточка: Изображение (добавлено поле ввода по ТЗ) -->
-            <div class="field-card">
-                <label>Файл изображения (Minio)</label>
-                <input type="text" value="{{service.imageUrl}}" style="margin-bottom: 12px;">
+                <label>Файл изображения</label>
+                <input type="file" name="imageFile" accept="image/*" class="file-input" style="margin-bottom: 12px;">
+                <small class="hint-text" style="margin-bottom: 12px;">Текущее фото: {{service.imageUrl}}</small>
                 <div class="media-card">
                     <img src="http://localhost:9000/construction-assets/{{service.imageUrl}}" class="preview-image">
                 </div>
             </div>
 
-            <!-- Карточка: Видео (добавлено поле ввода по ТЗ) -->
             <div class="field-card">
-                <label>Файл видео (Minio)</label>
-                <input type="text" value="{{service.videoUrl}}" style="margin-bottom: 12px;">
+                <label>Файл видео</label>
+                <input type="file" name="videoFile" accept="video/*" class="file-input" style="margin-bottom: 12px;">
+                <small class="hint-text" style="margin-bottom: 12px;">Текущее видео: {{service.videoUrl}}</small>
                 <div class="media-card">
                     <video src="http://localhost:9000/construction-assets/{{service.videoUrl}}" class="preview-video" controls></video>
                 </div>
             </div>
-        </form>
 
-        <!-- Подсказка для пользователя -->
+            <div class="field-card">
+                <label>Название проекта</label>
+                <input type="text" value="{{service.title}}">
+            </div>
+
+            <div class="field-card">
+                <label>Описание</label>
+                <textarea>{{service.description}}</textarea>
+            </div>
+
+            <div class="field-card">
+                <label>Цена (руб/м²)</label>
+                <input type="number" value="{{service.price}}">
+            </div>
+
+            <div class="field-card">
+                <label>Площадь (м²)</label>
+                <input type="number" value="{{service.area}}">
+            </div>
+        </form>
         <p style="text-align:center;color:#6b7280;font-size:13px;margin-top:8px;">
             ✏️ В первой лабораторной изменения не сохраняются
         </p>
