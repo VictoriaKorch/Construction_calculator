@@ -2,45 +2,45 @@
 {{#> layout}}
 <div class="add-container">
     <h1 class="page-title">Редактирование черновика</h1>
-    {{#if service}}
+    {{#if ConstructionService}}
         <form class="add-form" action="#" method="POST" enctype="multipart/form-data">
             
             <div class="field-card">
                 <label>Файл изображения</label>
                 <input type="file" name="imageFile" accept="image/*" class="file-input" style="margin-bottom: 12px;">
-                <small class="hint-text" style="margin-bottom: 12px;">Текущее фото: {{service.imageUrl}}</small>
+                <small class="hint-text" style="margin-bottom: 12px;">Текущее фото: {{ConstructionService.imageUrl}}</small>
                 <div class="media-card">
-                    <img src="http://localhost:9000/construction-assets/{{service.imageUrl}}" class="preview-image">
+                    <img src="http://localhost:9000/construction-assets/{{ConstructionService.imageUrl}}" class="preview-image">
                 </div>
             </div>
 
             <div class="field-card">
                 <label>Файл видео</label>
                 <input type="file" name="videoFile" accept="video/*" class="file-input" style="margin-bottom: 12px;">
-                <small class="hint-text" style="margin-bottom: 12px;">Текущее видео: {{service.videoUrl}}</small>
+                <small class="hint-text" style="margin-bottom: 12px;">Текущее видео: {{ConstructionService.videoUrl}}</small>
                 <div class="media-card">
-                    <video src="http://localhost:9000/construction-assets/{{service.videoUrl}}" class="preview-video" controls></video>
+                    <video src="http://localhost:9000/construction-assets/{{ConstructionService.videoUrl}}" class="preview-video" controls></video>
                 </div>
             </div>
 
             <div class="field-card">
                 <label>Название проекта</label>
-                <input type="text" value="{{service.title}}">
+                <input type="text" value="{{ConstructionService.title}}">
             </div>
 
             <div class="field-card">
                 <label>Описание</label>
-                <textarea>{{service.description}}</textarea>
+                <textarea>{{ConstructionService.description}}</textarea>
             </div>
 
             <div class="field-card">
                 <label>Цена (руб/м²)</label>
-                <input type="number" value="{{service.price}}">
+                <input type="number" value="{{ConstructionService.price}}">
             </div>
 
             <div class="field-card">
                 <label>Площадь (м²)</label>
-                <input type="number" value="{{service.area}}">
+                <input type="number" value="{{ConstructionService.area}}">
             </div>
         </form>
         <p style="text-align:center;color:#6b7280;font-size:13px;margin-top:8px;">

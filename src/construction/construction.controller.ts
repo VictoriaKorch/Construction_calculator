@@ -1,39 +1,39 @@
 // src/construction/construction.controller.ts
 import { Controller, Get, Param, Query, Render } from '@nestjs/common';
-import { ConstructionService } from './construction.service.js';
+import { ConstructionService as ConstructionServiceLogic } from './construction.service.js';
 
 @Controller('construction')
 export class ConstructionController {
-  constructor(private readonly constructionService: ConstructionService) {}
+  constructor(private readonly constructionServiceLogic: ConstructionServiceLogic) {}
 
   // ===== ЛЕНТА =====
   @Get('feed')
   @Render('feed')
   getFeed(@Query('id') id?: string, @Query('next') next?: string) {
-    let service;
+    let ConstructionService;
     if (id) {
-      service = this.constructionService.getServiceById(Number(id));
+      ConstructionService = this.constructionServiceLogic.getServiceById(Number(id));
     } else {
-      const all = this.constructionService.getAllServices();
-      service = all.find(s => s.status === 'published');
+      const all = this.constructionServiceLogic.getAllServices();
+      ConstructionService = all.find(s => s.status === 'published');
     }
 
-    if (next === 'true' && service) {
-      service = this.constructionService.getNextService(service.id);
+    if (next === 'true' && ConstructionService) {
+      ConstructionService = this.constructionServiceLogic.getNextService(ConstructionService.id);
     }
 
-    if (!service) {
+    if (!ConstructionService) {
       return { 
         title: 'Лента', 
-        service: null, 
+        ConstructionService: null, 
         navFeedActive: true 
       };
     }
 
     return {
       title: 'Лента строительных проектов',
-      service: service,
-      likesCount: service.likes.length,
+      ConstructionService: ConstructionService,
+      likesCount: ConstructionService.likes.length,
       navFeedActive: true 
     };
   }
@@ -42,10 +42,10 @@ export class ConstructionController {
   @Get('add')
   @Render('add')
   getAddPage() {
-    const draft = this.constructionService.getDraftService();
+    const draft = this.constructionServiceLogic.getDraftService();
     return {
       title: 'Добавление проекта',
-      service: draft,
+      ConstructionService: draft,
       navAddActive: true 
     };
   }
@@ -57,23 +57,23 @@ export class ConstructionController {
     @Query('minPrice') minPriceQuery?: string,
     @Query('maxPrice') maxPriceQuery?: string
   ) {
-    let services = this.constructionService.getAllServices();
+    let ConstructionServices = this.constructionServiceLogic.getAllServices();
     
     // Оставляем только опубликованные
-    services = services.filter(s => s.status === 'published');
+    ConstructionServices = ConstructionServices.filter(s => s.status === 'published');
 
     // 1. Вычисляем динамические лимиты ОТ и ДО по реальной базе
     let minLimit = 0;
     let maxLimit = 150000;
-    if (services.length > 0) {
-      minLimit = Math.min(...services.map(s => s.price));
-      maxLimit = Math.max(...services.map(s => s.price));
+    if (ConstructionServices.length > 0) {
+      minLimit = Math.min(...ConstructionServices.map(s => s.price));
+      maxLimit = Math.max(...ConstructionServices.map(s => s.price));
     }
 
     let min = minPriceQuery ? Number(minPriceQuery) : NaN;
     let max = maxPriceQuery ? Number(maxPriceQuery) : NaN;
 
-    // 2. ДУРАКОУСТОЙЧИВОСТЬ: Если пользователь задал От больше, чем До, меняем их местами
+    // 2. ДУРАКОУСТОЙЧИВОСТЬ: Если От больше, чем До
     if (!isNaN(min) && !isNaN(max) && min > max) {
       const temp = min;
       min = max;
@@ -82,29 +82,24 @@ export class ConstructionController {
 
     // 3. Фильтрация массива
     if (!isNaN(min)) {
-      services = services.filter(s => s.price >= min);
+      ConstructionServices = ConstructionServices.filter(s => s.price >= min);
     }
     if (!isNaN(max)) {
-      services = services.filter(s => s.price <= max);
+      ConstructionServices = ConstructionServices.filter(s => s.price <= max);
     }
 
-    const servicesWithLikes = services.map(s => ({
+    const ConstructionServicesWithLikes = ConstructionServices.map(s => ({
       ...s,
       likesCount: s.likes.length,
     }));
 
     return {
       title: 'Список проектов',
-      services: servicesWithLikes,
-      
-      // Передаем текущие выбранные значения (или лимиты по умолчанию, если ничего не выбрано)
+      ConstructionServices: ConstructionServicesWithLikes,
       currentMin: !isNaN(min) ? min : minLimit,
       currentMax: !isNaN(max) ? max : maxLimit,
-      
-      // Передаем абсолютные лимиты для краев ползунка
       minLimit: minLimit,
       maxLimit: maxLimit,
-      
       navTileActive: true 
     };
   }

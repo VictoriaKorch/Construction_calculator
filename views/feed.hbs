@@ -1,10 +1,10 @@
 <!-- views/feed.hbs -->
 {{#> layout}}
 <div class="feed-container">
-    {{#if service}}
+    {{#if ConstructionService}}
         <div class="video-wrapper">
             <video 
-                src="http://localhost:9000/construction-assets/{{service.videoUrl}}" 
+                src="http://localhost:9000/construction-assets/{{ConstructionService.videoUrl}}" 
                 class="feed-video" 
                 autoplay 
                 muted 
@@ -12,13 +12,12 @@
                 playsinline>
             </video>
 
-            <!-- Правая боковая панель (Лайки, Следующий) теперь по центру справа -->
             <div class="feed-sidebar">
                 <div class="sidebar-item">
                     <div class="sidebar-icon">❤️</div>
                     <span class="sidebar-text">{{likesCount}}</span>
                 </div>
-                <a href="/construction/feed?id={{service.id}}&next=true" class="sidebar-item next-btn">
+                <a href="/construction/feed?id={{ConstructionService.id}}&next=true" class="sidebar-item next-btn">
                     <div class="sidebar-icon">↓</div>
                     <span class="sidebar-text">Далее</span>
                 </a>
@@ -27,22 +26,19 @@
             <div class="video-overlay">
                 <div class="feed-content">
                     
-                    <!-- Верхний блок с названием слева и параметрами справа (друг под другом) -->
                     <div class="title-row">
-                        <h2 class="service-title">{{service.title}}</h2>
+                        <h2 class="service-title">{{ConstructionService.title}}</h2>
                         <div class="service-details">
-                            <span class="detail-item">{{service.price}} руб/м²</span>
-                            <span class="detail-item">{{service.area}} м²</span>
+                            <span class="detail-item">{{ConstructionService.price}} руб/м²</span>
+                            <span class="detail-item">{{ConstructionService.area}} м²</span>
                         </div>
                     </div>
                     
-                    <!-- Описание на всю ширину с 2 строками и кнопкой Еще -->
                     <div class="description-wrapper">
                         <input type="checkbox" id="desc-toggle" class="desc-checkbox">
                         
-                        <!-- Единый текст (без деления на куски). Вторая часть приклеена к описанию -->
                         <div class="service-description">
-                            {{service.description}} В расчет укрупненного показателя стоимости включены: базовые строительно-монтажные работы (СМР), устройство фундамента и подведение наружных инженерных сетей до границы участка.
+                            {{ConstructionService.description}} В расчет укрупненного показателя стоимости включены: базовые строительно-монтажные работы (СМР), устройство фундамента и подведение наружных инженерных сетей до границы участка.
                         </div>
                         
                         <label for="desc-toggle" class="toggle-description" data-more="Еще" data-less="Скрыть"></label>
@@ -51,7 +47,7 @@
             </div>
         </div>
     {{else}}
-        <div class="empty-state"><p>Нет доступных услуг</p></div>
+        <div class="empty-state"><p>Нет доступных проектов</p></div>
     {{/if}}
 </div>
 {{/layout}}
