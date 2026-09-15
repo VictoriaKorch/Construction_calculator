@@ -4,25 +4,14 @@
     <h1 class="tile-title">Укрупненные показатели стоимости</h1>
     
     <form class="search-form slider-form" action="/construction/tile" method="GET">
-        
         <!-- Слайдер ОТ -->
         <div class="slider-group">
             <div class="slider-header">
-                <label for="min-slider">
-                    От: <b>{{currentMin}} руб/м²</b>
-                </label>
+                <label for="min-slider">От: <b>{{currentMin}} руб/м²</b></label>
             </div>
             <div class="search-bar slider-bar">
                 <span class="slider-bound">{{minLimit}}</span>
-                <input 
-                    type="range" 
-                    id="min-slider"
-                    name="minPrice" 
-                    min="{{minLimit}}"
-                    max="{{maxLimit}}"
-                    value="{{currentMin}}" 
-                    class="search-slider"
-                >
+                <input type="range" id="min-slider" name="minPrice" min="{{minLimit}}" max="{{maxLimit}}" value="{{currentMin}}" class="search-slider">
                 <span class="slider-bound">{{maxLimit}}</span>
             </div>
         </div>
@@ -30,21 +19,11 @@
         <!-- Слайдер ДО -->
         <div class="slider-group">
             <div class="slider-header">
-                <label for="max-slider">
-                    До: <b>{{currentMax}} руб/м²</b>
-                </label>
+                <label for="max-slider">До: <b>{{currentMax}} руб/м²</b></label>
             </div>
             <div class="search-bar slider-bar">
                 <span class="slider-bound">{{minLimit}}</span>
-                <input 
-                    type="range" 
-                    id="max-slider"
-                    name="maxPrice" 
-                    min="{{minLimit}}"
-                    max="{{maxLimit}}"
-                    value="{{currentMax}}" 
-                    class="search-slider"
-                >
+                <input type="range" id="max-slider" name="maxPrice" min="{{minLimit}}" max="{{maxLimit}}" value="{{currentMax}}" class="search-slider">
                 <span class="slider-bound">{{maxLimit}}</span>
             </div>
         </div>
@@ -54,14 +33,26 @@
 
     <div class="services-grid">
         {{#each ConstructionServices}}
-            <a href="/construction/feed?id={{this.id}}" class="service-card" style="text-decoration: none; display: block;">
-                <img src="http://localhost:9000/construction-assets/{{this.imageUrl}}" class="card-image">
-                <div class="card-content">
-                    <h3 class="card-title">{{this.title}}</h3>
-                    <div class="card-price">{{this.price}} руб/м²</div>
-                    <div class="card-likes">❤️ {{this.likesCount}}</div>
-                </div>
-            </a>
+            <div class="service-card-wrapper" style="position: relative; display: block;">
+                <a href="/construction/feed?id={{this.id}}" class="service-card" style="text-decoration: none; display: block;">
+                    {{#if this.imageUrl}}
+                        <img src="http://localhost:9000/construction-assets/{{this.imageUrl}}" class="card-image">
+                    {{else}}
+                        <img src="/img/default.jpg" class="card-image" style="background:#f1f2f4;">
+                    {{/if}}
+                    <div class="card-content">
+                        <h3 class="card-title">{{this.title}}</h3>
+                        <div class="card-price">{{this.price}} руб/м²</div>
+                        <div class="card-likes">❤️ {{this.likesCount}}</div>
+                    </div>
+                </a>
+                
+                <!-- Кнопка удаления через сырой SQL POST -->
+                <form action="/construction/delete" method="POST" style="position: absolute; top: 8px; right: 8px; z-index: 10;">
+                    <input type="hidden" name="service_id" value="{{this.id}}">
+                    <button type="submit" style="background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 11px;">Удалить</button>
+                </form>
+            </div>
         {{else}}
             <p class="empty-message">Нет услуг по фильтру</p>
         {{/each}}

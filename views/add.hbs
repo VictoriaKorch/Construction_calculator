@@ -1,53 +1,58 @@
 <!-- views/add.hbs -->
 {{#> layout}}
-<div class="add-container">
-    <h1 class="page-title">Редактирование черновика</h1>
-    {{#if ConstructionService}}
-        <form class="add-form" action="#" method="POST" enctype="multipart/form-data">
+<div class="add-container" style="min-height: calc(100vh - 70px); padding-bottom: 30px;">
+    <h1 class="page-title">{{#if hasDraft}}Публикация проекта{{else}}Новый проект{{/if}}</h1>
+
+    {{#if hasDraft}}
+        <!-- Шаг 2: Черновик существует -->
+        <form class="add-form" action="/construction/publish" method="POST" novalidate>
+            <input type="hidden" name="id" value="{{ConstructionService.id}}">
             
             <div class="field-card">
                 <label>Файл изображения</label>
-                <input type="file" name="imageFile" accept="image/*" class="file-input" style="margin-bottom: 12px;">
-                <small class="hint-text" style="margin-bottom: 12px;">Текущее фото: {{ConstructionService.imageUrl}}</small>
-                <div class="media-card">
-                    <img src="http://localhost:9000/construction-assets/{{ConstructionService.imageUrl}}" class="preview-image">
-                </div>
+                <input type="file" accept="image/*" class="file-input" style="margin-bottom: 12px;">
             </div>
-
             <div class="field-card">
                 <label>Файл видео</label>
-                <input type="file" name="videoFile" accept="video/*" class="file-input" style="margin-bottom: 12px;">
-                <small class="hint-text" style="margin-bottom: 12px;">Текущее видео: {{ConstructionService.videoUrl}}</small>
-                <div class="media-card">
-                    <video src="http://localhost:9000/construction-assets/{{ConstructionService.videoUrl}}" class="preview-video" controls></video>
-                </div>
+                <input type="file" accept="video/*" class="file-input" style="margin-bottom: 12px;">
             </div>
-
             <div class="field-card">
                 <label>Название проекта</label>
-                <input type="text" value="{{ConstructionService.title}}">
+                <input type="text" name="title" value="{{ConstructionService.title}}" {{#if errorTitle}}style="background-color: rgba(255, 0, 0, 0.05); border-color: red;"{{/if}} required>
             </div>
-
+            
             <div class="field-card">
                 <label>Описание</label>
-                <textarea>{{ConstructionService.description}}</textarea>
+                <textarea name="description" {{#if errorDesc}}style="background-color: rgba(255, 0, 0, 0.05); border-color: red;"{{/if}}>{{ConstructionService.description}}</textarea>
             </div>
-
             <div class="field-card">
                 <label>Цена (руб/м²)</label>
-                <input type="number" value="{{ConstructionService.price}}">
+                <input type="number" name="price" value="{{ConstructionService.price}}" {{#if errorPrice}}style="background-color: rgba(255, 0, 0, 0.05); border-color: red;"{{/if}}>
             </div>
-
             <div class="field-card">
                 <label>Площадь (м²)</label>
-                <input type="number" value="{{ConstructionService.area}}">
+                <input type="number" name="area" value="{{ConstructionService.area}}" {{#if errorArea}}style="background-color: rgba(255, 0, 0, 0.05); border-color: red;"{{/if}}>
             </div>
+            
+            <button type="submit" class="search-btn full-width-btn" style="margin-top: 15px;">Опубликовать</button>
         </form>
-        <p style="text-align:center;color:#6b7280;font-size:13px;margin-top:8px;">
-            ✏️ В первой лабораторной изменения не сохраняются
-        </p>
     {{else}}
-        <p class="empty-message">Черновик не найден</p>
+        <!-- Шаг 1: Черновика нет -->
+        <form class="add-form" action="/construction/add-draft" method="POST" novalidate>
+            <div class="field-card">
+                <label>Файл изображения</label>
+                <input type="file" accept="image/*" class="file-input" style="margin-bottom: 12px;">
+            </div>
+            <div class="field-card">
+                <label>Файл видео</label>
+                <input type="file" accept="video/*" class="file-input" style="margin-bottom: 12px;">
+            </div>
+            <div class="field-card">
+                <label>Название проекта</label>
+                <input type="text" name="title" {{#if errorTitle}}style="background-color: rgba(255, 0, 0, 0.05); border-color: red;"{{/if}}>
+            </div>
+            <button type="submit" class="search-btn full-width-btn" style="margin-top: 15px;">Далее</button>
+        </form>
     {{/if}}
 </div>
 {{/layout}}

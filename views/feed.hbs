@@ -3,14 +3,11 @@
 <div class="feed-container">
     {{#if ConstructionService}}
         <div class="video-wrapper">
-            <video 
-                src="http://localhost:9000/construction-assets/{{ConstructionService.videoUrl}}" 
-                class="feed-video" 
-                autoplay 
-                muted 
-                loop 
-                playsinline>
-            </video>
+            {{#if ConstructionService.videoUrl}}
+                <video src="http://localhost:9000/construction-assets/{{ConstructionService.videoUrl}}" class="feed-video" autoplay muted loop playsinline></video>
+            {{else}}
+                <img src="/img/default-video.jpg" class="feed-video" style="object-fit: cover;">
+            {{/if}}
 
             <div class="feed-sidebar">
                 <div class="sidebar-item">
@@ -25,7 +22,6 @@
 
             <div class="video-overlay">
                 <div class="feed-content">
-                    
                     <div class="title-row">
                         <h2 class="service-title">{{ConstructionService.title}}</h2>
                         <div class="service-details">
@@ -36,11 +32,7 @@
                     
                     <div class="description-wrapper">
                         <input type="checkbox" id="desc-toggle" class="desc-checkbox">
-                        
-                        <div class="service-description">
-                            {{ConstructionService.description}} В расчет укрупненного показателя стоимости включены: базовые строительно-монтажные работы (СМР), устройство фундамента и подведение наружных инженерных сетей до границы участка.
-                        </div>
-                        
+                        <div class="service-description">{{ConstructionService.description}}</div>
                         <label for="desc-toggle" class="toggle-description" data-more="Еще" data-less="Скрыть"></label>
                     </div>
                 </div>

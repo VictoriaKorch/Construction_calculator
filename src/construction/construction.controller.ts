@@ -1,106 +1,111 @@
-// src/construction/construction.controller.ts
-import { Controller, Get, Param, Query, Render } from '@nestjs/common';
-import { ConstructionService as ConstructionServiceLogic } from './construction.service.js';
+import { Controller, Get, Post, Param, Query, Body, Render, Redirect, Res } from '@nestjs/common';
+import { ConstructionService } from './construction.service.js';
 
 @Controller('construction')
 export class ConstructionController {
-  constructor(private readonly constructionServiceLogic: ConstructionServiceLogic) {}
+  constructor(private readonly constructionService: ConstructionService) {}
 
-  // ===== ЛЕНТА =====
-  @Get('feed')
-  @Render('feed')
-  getFeed(@Query('id') id?: string, @Query('next') next?: string) {
-    let ConstructionService;
-    if (id) {
-      ConstructionService = this.constructionServiceLogic.getServiceById(Number(id));
-    } else {
-      const all = this.constructionServiceLogic.getAllServices();
-      ConstructionService = all.find(s => s.status === 'published');
-    }
-
-    if (next === 'true' && ConstructionService) {
-      ConstructionService = this.constructionServiceLogic.getNextService(ConstructionService.id);
-    }
-
-    if (!ConstructionService) {
-      return { 
-        title: 'Лента', 
-        ConstructionService: null, 
-        navFeedActive: true 
-      };
-    }
-
-    return {
-      title: 'Лента строительных проектов',
-      ConstructionService: ConstructionService,
-      likesCount: ConstructionService.likes.length,
-      navFeedActive: true 
-    };
-  }
-
-  // ===== ДОБАВЛЕНИЕ (Черновик) =====
-  @Get('add')
-  @Render('add')
-  getAddPage() {
-    const draft = this.constructionServiceLogic.getDraftService();
-    return {
-      title: 'Добавление проекта',
-      ConstructionService: draft,
-      navAddActive: true 
-    };
-  }
-
-  // ===== ПЛИТКА =====
   @Get('tile')
   @Render('tile')
-  getTilePage(
+  async getTilePage(
     @Query('minPrice') minPriceQuery?: string,
     @Query('maxPrice') maxPriceQuery?: string
   ) {
-    let ConstructionServices = this.constructionServiceLogic.getAllServices();
-    
-    // Оставляем только опубликованные
-    ConstructionServices = ConstructionServices.filter(s => s.status === 'published');
+    let services = await this.constructionService.getPublishedServices();
 
-    // 1. Вычисляем динамические лимиты ОТ и ДО по реальной базе
-    let minLimit = 0;
-    let maxLimit = 150000;
-    if (ConstructionServices.length > 0) {
-      minLimit = Math.min(...ConstructionServices.map(s => s.price));
-      maxLimit = Math.max(...ConstructionServices.map(s => s.price));
-    }
+    let minLimit = services.length > 0 ? Math.min(...services.map(s => Number(s.price))) : 0;
+    let maxLimit = services.length > 0 ? Math.max(...services.map(s => Number(s.price))) : 150000;
 
     let min = minPriceQuery ? Number(minPriceQuery) : NaN;
     let max = maxPriceQuery ? Number(maxPriceQuery) : NaN;
 
-    // 2. ДУРАКОУСТОЙЧИВОСТЬ: Если От больше, чем До
     if (!isNaN(min) && !isNaN(max) && min > max) {
-      const temp = min;
-      min = max;
-      max = temp;
+      const temp = min; min = max; max = temp;
+    }
+    if (!isNaN(min)) services = services.filter(s => Number(s.price) >= min);
+    if (!isNaN(max)) services = services.filter(s => Number(s.price) <= max);
+
+    return { title: 'Список проектов', ConstructionServices: services, currentMin: !isNaN(min) ? min : minLimit, currentMax: !isNaN(max) ? max : maxLimit, minLimit, maxLimit, navTileActive: true };
+  }
+
+  @Get('feed')
+  @Render('feed')
+  async getFeed(@Query('id') id?: string, @Query('next') next?: string) {
+    let service = null;
+    if (id) {
+      service = await this.constructionService.getServiceById(Number(id));
+      if (next === 'true' && service) {
+        service = await this.constructionService.getNextService(service.id);
+      }
+    } else {
+      const all = await this.constructionService.getPublishedServices();
+      service = all.length > 0 ? all[0] : null;
     }
 
-    // 3. Фильтрация массива
-    if (!isNaN(min)) {
-      ConstructionServices = ConstructionServices.filter(s => s.price >= min);
-    }
-    if (!isNaN(max)) {
-      ConstructionServices = ConstructionServices.filter(s => s.price <= max);
-    }
+    return { title: 'Лента', ConstructionService: service, navFeedActive: true };
+  }
 
-    const ConstructionServicesWithLikes = ConstructionServices.map(s => ({
-      ...s,
-      likesCount: s.likes.length,
-    }));
-
-    return {
-      title: 'Список проектов',
-      ConstructionServices: ConstructionServicesWithLikes,
-      currentMin: !isNaN(min) ? min : minLimit,
-      currentMax: !isNaN(max) ? max : maxLimit,
-      minLimit: minLimit,
-      maxLimit: maxLimit,
-      navTileActive: true 
+  @Get('add')
+  @Render('add')
+  async getAddPage() {
+    const draft = await this.constructionService.getDraft();
+    return { 
+      title: 'Добавление проекта', 
+      ConstructionService: draft, 
+      hasDraft: !!draft, 
+      navAddActive: true 
     };
+  }
+
+  @Post('add-draft')
+  async createDraft(@Body('title') title: string, @Res() res: any) {
+    if (!title) {
+      return res.render('add', {
+        title: 'Добавление проекта',
+        hasDraft: false,
+        navAddActive: true,
+        errorTitle: true 
+      });
+    }
+
+    await this.constructionService.createDraft(title);
+    return res.redirect('/construction/add');
+  }
+
+  @Post('publish')
+  async publishDraft(
+    @Body('id') id: string,
+    @Body('title') title: string,
+    @Body('description') description: string,
+    @Body('price') price: string,
+    @Body('area') area: string,
+    @Res() res: any 
+  ) {
+    if (!title || !description || !price || !area) {
+      return res.render('add', {
+        title: 'Публикация проекта',
+        hasDraft: true,
+        navAddActive: true,
+        ConstructionService: { id, title, description, price, area },
+        errorTitle: !title,
+        errorDesc: !description,
+        errorPrice: !price,
+        errorArea: !area
+      });
+    }
+
+    await this.constructionService.publishService(Number(id), {
+      title,
+      description,
+      price: Number(price),
+      area: Number(area)
+    });
+    return res.redirect('/construction/tile');
+  }
+
+  @Post('delete')
+  @Redirect('/construction/tile')
+  async deleteService(@Body('service_id') serviceId: string) {
+    await this.constructionService.softDeleteSql(Number(serviceId));
   }
 }
