@@ -26,7 +26,7 @@ export class ConstructionController {
       return { 
         title: 'Лента', 
         service: null, 
-        navFeedActive: true // Флажок для подсветки активной вкладки
+        navFeedActive: true 
       };
     }
 
@@ -34,7 +34,7 @@ export class ConstructionController {
       title: 'Лента строительных проектов',
       service: service,
       likesCount: service.likes.length,
-      navFeedActive: true // Флажок для подсветки активной вкладки
+      navFeedActive: true 
     };
   }
 
@@ -46,24 +46,46 @@ export class ConstructionController {
     return {
       title: 'Добавление проекта',
       service: draft,
-      navAddActive: true // Флажок для подсветки активной вкладки
+      navAddActive: true 
     };
   }
 
   // ===== ПЛИТКА =====
   @Get('tile')
   @Render('tile')
-  getTilePage(@Query('filterPrice') filterPrice?: string) {
+  getTilePage(
+    @Query('minPrice') minPriceQuery?: string,
+    @Query('maxPrice') maxPriceQuery?: string
+  ) {
     let services = this.constructionService.getAllServices();
-
-    // СЕРВЕРНАЯ ФИЛЬТРАЦИЯ: Оставляем только опубликованные проекты (убираем черновики)
+    
+    // Оставляем только опубликованные
     services = services.filter(s => s.status === 'published');
 
-    if (filterPrice) {
-      const maxPrice = Number(filterPrice);
-      if (!isNaN(maxPrice)) {
-        services = services.filter(s => s.price <= maxPrice);
-      }
+    // 1. Вычисляем динамические лимиты ОТ и ДО по реальной базе
+    let minLimit = 0;
+    let maxLimit = 150000;
+    if (services.length > 0) {
+      minLimit = Math.min(...services.map(s => s.price));
+      maxLimit = Math.max(...services.map(s => s.price));
+    }
+
+    let min = minPriceQuery ? Number(minPriceQuery) : NaN;
+    let max = maxPriceQuery ? Number(maxPriceQuery) : NaN;
+
+    // 2. ДУРАКОУСТОЙЧИВОСТЬ: Если пользователь задал От больше, чем До, меняем их местами
+    if (!isNaN(min) && !isNaN(max) && min > max) {
+      const temp = min;
+      min = max;
+      max = temp;
+    }
+
+    // 3. Фильтрация массива
+    if (!isNaN(min)) {
+      services = services.filter(s => s.price >= min);
+    }
+    if (!isNaN(max)) {
+      services = services.filter(s => s.price <= max);
     }
 
     const servicesWithLikes = services.map(s => ({
@@ -74,8 +96,16 @@ export class ConstructionController {
     return {
       title: 'Список проектов',
       services: servicesWithLikes,
-      currentFilter: filterPrice || '',
-      navTileActive: true // Флажок для подсветки активной вкладки
+      
+      // Передаем текущие выбранные значения (или лимиты по умолчанию, если ничего не выбрано)
+      currentMin: !isNaN(min) ? min : minLimit,
+      currentMax: !isNaN(max) ? max : maxLimit,
+      
+      // Передаем абсолютные лимиты для краев ползунка
+      minLimit: minLimit,
+      maxLimit: maxLimit,
+      
+      navTileActive: true 
     };
   }
 }

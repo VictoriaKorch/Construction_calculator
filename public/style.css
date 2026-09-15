@@ -155,7 +155,6 @@ body {
     backdrop-filter: blur(4px);
     font-weight: 500;
     font-size: 11px;
-    /* ОБВОДКА СТАЛА НАМНОГО МЯГЧЕ (0.08) */
     border: 1px solid rgba(255,255,255,0.08); 
     text-align: center; 
     width: 100%;
@@ -212,7 +211,6 @@ body {
 .feed-sidebar {
     position: absolute;
     right: 14px;
-    /* ПОДНЯЛИ ПАНЕЛЬ ВЫШЕ (было 50%, стало 42%) */
     top: 42%;
     transform: translateY(-50%);
     display: flex;
@@ -479,7 +477,13 @@ body {
 .slider-form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+}
+
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .slider-header label {
@@ -491,10 +495,13 @@ body {
     color: #0468ff;
 }
 
+/* ВАЖНО: Разрешаем видимость за краями (overflow: visible), чтобы кружочки не резало */
 .slider-bar {
     border: none;
     background: transparent;
     gap: 12px;
+    overflow: visible; 
+    padding: 6px 0; /* Даем немного воздуха сверху и снизу */
 }
 
 .slider-bound {
@@ -514,11 +521,12 @@ body {
     outline: none;
 }
 
+/* ВАЖНО: Уменьшили кружочек до 16px, теперь он идеально круглый */
 .search-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 16px; 
+    height: 16px;
     border-radius: 50%;
     background: #0468ff;
     cursor: pointer;
@@ -531,6 +539,12 @@ body {
     transform: scale(1.15);
 }
 
+.full-width-btn {
+    width: 100%;
+    border-radius: 12px;
+    margin-top: 6px;
+}
+
 .file-input {
     display: block;
     width: 100%;
@@ -540,7 +554,6 @@ body {
     background: #f1f2f4;
     border-radius: 8px;
     cursor: pointer;
-    /* Делаем текст приглушенным, чтобы он смотрелся как плейсхолдер */
     color: #737a8e;
     font-size: 14px;
     box-sizing: border-box;
@@ -549,7 +562,6 @@ body {
     white-space: nowrap;
     line-height: 32px; 
 }
-
 
 .file-input::-webkit-file-upload-button {
     display: none;

@@ -4,28 +4,52 @@
     <h1 class="tile-title">Укрупненные показатели стоимости</h1>
     
     <form class="search-form slider-form" action="/construction/tile" method="GET">
-        <div class="slider-header">
-            <label for="price-slider">
-                Максимальная цена: 
-                <b>{{#if currentFilter}}{{currentFilter}}{{else}}150000{{/if}} руб/м²</b>
-            </label>
+        
+        <!-- Слайдер ОТ -->
+        <div class="slider-group">
+            <div class="slider-header">
+                <label for="min-slider">
+                    От: <b>{{currentMin}} руб/м²</b>
+                </label>
+            </div>
+            <div class="search-bar slider-bar">
+                <span class="slider-bound">{{minLimit}}</span>
+                <input 
+                    type="range" 
+                    id="min-slider"
+                    name="minPrice" 
+                    min="{{minLimit}}"
+                    max="{{maxLimit}}"
+                    value="{{currentMin}}" 
+                    class="search-slider"
+                >
+                <span class="slider-bound">{{maxLimit}}</span>
+            </div>
         </div>
 
-        <div class="search-bar slider-bar">
-            <span class="slider-bound">0</span>
-            <input 
-                type="range" 
-                id="price-slider"
-                name="filterPrice" 
-                min="0"
-                max="150000"
-                step="5000"
-                value="{{#if currentFilter}}{{currentFilter}}{{else}}150000{{/if}}" 
-                class="search-slider"
-            >
-            <span class="slider-bound">150k</span>
-            <button type="submit" class="search-btn">Найти</button>
+        <!-- Слайдер ДО -->
+        <div class="slider-group">
+            <div class="slider-header">
+                <label for="max-slider">
+                    До: <b>{{currentMax}} руб/м²</b>
+                </label>
+            </div>
+            <div class="search-bar slider-bar">
+                <span class="slider-bound">{{minLimit}}</span>
+                <input 
+                    type="range" 
+                    id="max-slider"
+                    name="maxPrice" 
+                    min="{{minLimit}}"
+                    max="{{maxLimit}}"
+                    value="{{currentMax}}" 
+                    class="search-slider"
+                >
+                <span class="slider-bound">{{maxLimit}}</span>
+            </div>
         </div>
+
+        <button type="submit" class="search-btn full-width-btn">Найти</button>
     </form>
 
     <div class="services-grid">
