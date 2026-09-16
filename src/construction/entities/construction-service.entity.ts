@@ -1,39 +1,39 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity.js';
 
-@Entity('construction_services')
+@Entity('construction_service_items')
 export class ConstructionServiceEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'construction_service_item_id' })
   id: number;
 
-  @Column({ type: 'varchar', length: 150 })
+  @Column({ name: 'construction_service_title', type: 'varchar', length: 150 })
   title: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'construction_service_description', type: 'text', nullable: true })
   description: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ name: 'construction_service_price', type: 'int', nullable: true })
   price: number | null; 
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ name: 'construction_service_area', type: 'int', nullable: true })
   area: number | null; 
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ name: 'construction_service_image_url', type: 'varchar', nullable: true })
   imageUrl: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ name: 'construction_service_video_url', type: 'varchar', nullable: true })
   videoUrl: string;
 
-  @Column({ type: 'varchar', length: 20, default: 'draft' })
+  @Column({ name: 'construction_service_status', type: 'varchar', length: 20, default: 'draft' })
   status: string; 
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'construction_service_created_at' })
   createdAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @UpdateDateColumn({ name: 'construction_service_formed_at' })
   formationDate: Date; 
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'creator_id' })
+  @ManyToOne(() => User, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'construction_service_creator_id' })
   creator: User;
 }
