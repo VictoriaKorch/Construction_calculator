@@ -11,10 +11,26 @@
             <div class="field-card">
                 <label>Файл изображения</label>
                 <input type="file" accept="image/*" class="file-input" style="margin-bottom: 12px;">
+                <div class="media-card" style="margin-top: 10px;">
+                    {{#if ConstructionService.imageUrl}}
+                        <img src="http://localhost:9000/construction-assets/{{ConstructionService.imageUrl}}" class="preview-image" alt="Превью фото">
+                    {{else}}
+                        <img src="/img/default.jpg" class="preview-image" alt="Превью фото">
+                    {{/if}}
+                </div>
             </div>
             <div class="field-card">
                 <label>Файл видео</label>
                 <input type="file" accept="video/*" class="file-input" style="margin-bottom: 12px;">
+                <div class="media-card" style="margin-top: 10px;">
+                    <video class="preview-video" controls style="width: 100%;">
+                        {{#if ConstructionService.videoUrl}}
+                            <source src="http://localhost:9000/construction-assets/{{ConstructionService.videoUrl}}" type="video/mp4">
+                        {{else}}
+                            <source src="/img/default-video.mp4" type="video/mp4">
+                        {{/if}}
+                    </video>
+                </div>
             </div>
             <div class="field-card">
                 <label>Название проекта</label>
@@ -42,10 +58,18 @@
             <div class="field-card">
                 <label>Файл изображения</label>
                 <input type="file" accept="image/*" class="file-input" style="margin-bottom: 12px;">
+                <div class="media-card" style="margin-top: 10px;">
+                    <img src="/img/default.jpg" class="preview-image" alt="Превью фото">
+                </div>
             </div>
             <div class="field-card">
                 <label>Файл видео</label>
                 <input type="file" accept="video/*" class="file-input" style="margin-bottom: 12px;">
+                <div class="media-card" style="margin-top: 10px;">
+                    <video class="preview-video" controls style="width: 100%;">
+                        <source src="/img/default-video.mp4" type="video/mp4">
+                    </video>
+                </div>
             </div>
             <div class="field-card">
                 <label>Название проекта</label>

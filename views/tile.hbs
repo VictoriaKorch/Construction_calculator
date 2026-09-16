@@ -1,10 +1,44 @@
 <!-- views/tile.hbs -->
 {{#> layout}}
+<style>
+    .service-card-wrapper {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+    }
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 4px 8px 4px;
+        /* Убрали серую линию (border-top) */
+        margin-top: auto; 
+    }
+    .btn-cian-delete {
+        background: transparent;
+        /* Сделали обводку чуть темнее */
+        border: 1px solid #d0d4dc;
+        /* Сделали текст чуть темнее */
+        color: #737a8e;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        cursor: pointer;
+        transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-cian-delete:hover {
+        color: #ff5a5f;
+        border-color: #ff5a5f;
+    }
+</style>
+
 <div class="tile-container">
     <h1 class="tile-title">Укрупненные показатели стоимости</h1>
     
     <form class="search-form slider-form" action="/construction/tile" method="GET">
-        <!-- Слайдер ОТ -->
         <div class="slider-group">
             <div class="slider-header">
                 <label for="min-slider">От: <b>{{currentMin}} руб/м²</b></label>
@@ -16,7 +50,6 @@
             </div>
         </div>
 
-        <!-- Слайдер ДО -->
         <div class="slider-group">
             <div class="slider-header">
                 <label for="max-slider">До: <b>{{currentMax}} руб/м²</b></label>
@@ -33,8 +66,8 @@
 
     <div class="services-grid">
         {{#each ConstructionServices}}
-            <div class="service-card-wrapper" style="position: relative; display: block;">
-                <a href="/construction/feed?id={{this.id}}" class="service-card" style="text-decoration: none; display: block;">
+            <div class="service-card-wrapper">
+                <a href="/construction/feed?id={{this.id}}" class="service-card" style="text-decoration: none; display: block; padding-bottom: 4px;">
                     {{#if this.imageUrl}}
                         <img src="http://localhost:9000/construction-assets/{{this.imageUrl}}" class="card-image">
                     {{else}}
@@ -43,15 +76,16 @@
                     <div class="card-content">
                         <h3 class="card-title">{{this.title}}</h3>
                         <div class="card-price">{{this.price}} руб/м²</div>
-                        <div class="card-likes">❤️ {{this.likesCount}}</div>
                     </div>
                 </a>
                 
-                <!-- Кнопка удаления через сырой SQL POST -->
-                <form action="/construction/delete" method="POST" style="position: absolute; top: 8px; right: 8px; z-index: 10;">
-                    <input type="hidden" name="service_id" value="{{this.id}}">
-                    <button type="submit" style="background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 11px;">Удалить</button>
-                </form>
+                <div class="card-footer">
+                    <div class="card-likes">❤️ {{this.likesCount}}</div>
+                    <form action="/construction/delete" method="POST" style="margin: 0;">
+                        <input type="hidden" name="service_id" value="{{this.id}}">
+                        <button type="submit" class="btn-cian-delete">Удалить</button>
+                    </form>
+                </div>
             </div>
         {{else}}
             <p class="empty-message">Нет услуг по фильтру</p>

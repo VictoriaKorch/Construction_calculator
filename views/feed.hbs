@@ -3,16 +3,17 @@
 <div class="feed-container">
     {{#if ConstructionService}}
         <div class="video-wrapper">
+            <!-- Заменяем дефолтную картинку на дефолтное видео -->
             {{#if ConstructionService.videoUrl}}
                 <video src="http://localhost:9000/construction-assets/{{ConstructionService.videoUrl}}" class="feed-video" autoplay muted loop playsinline></video>
             {{else}}
-                <img src="/img/default-video.jpg" class="feed-video" style="object-fit: cover;">
+                <video src="/img/default-video.mp4" class="feed-video" autoplay muted loop playsinline></video>
             {{/if}}
 
             <div class="feed-sidebar">
                 <div class="sidebar-item">
                     <div class="sidebar-icon">❤️</div>
-                    <span class="sidebar-text">{{likesCount}}</span>
+                    <span class="sidebar-text">{{ConstructionService.likesCount}}</span>
                 </div>
                 <a href="/construction/feed?id={{ConstructionService.id}}&next=true" class="sidebar-item next-btn">
                     <div class="sidebar-icon">↓</div>
@@ -25,8 +26,8 @@
                     <div class="title-row">
                         <h2 class="service-title">{{ConstructionService.title}}</h2>
                         <div class="service-details">
-                            <span class="detail-item">{{ConstructionService.price}} руб/м²</span>
-                            <span class="detail-item">{{ConstructionService.area}} м²</span>
+                            <span class="detail-item">{{#if ConstructionService.price}}{{ConstructionService.price}}{{else}}0{{/if}} руб/м²</span>
+                            <span class="detail-item">{{#if ConstructionService.area}}{{ConstructionService.area}}{{else}}0{{/if}} м²</span>
                         </div>
                     </div>
                     
