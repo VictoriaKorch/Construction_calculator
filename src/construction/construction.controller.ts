@@ -32,14 +32,16 @@ export class ConstructionController {
   @Render('feed')
   async getFeed(@Query('id') id?: string, @Query('next') next?: string) {
     let service = null;
+    
     if (id) {
       service = await this.constructionService.getServiceById(Number(id));
       if (next === 'true' && service) {
+        // Запрашиваем только одну следующую карточку
         service = await this.constructionService.getNextService(service.id);
       }
     } else {
-      const all = await this.constructionService.getPublishedServices();
-      service = all.length > 0 ? all[0] : null;
+      // При первой загрузке ленты запрашиваем строго первую карточку
+      service = await this.constructionService.getFirstService();
     }
 
     return { title: 'Лента', ConstructionService: service, navFeedActive: true };

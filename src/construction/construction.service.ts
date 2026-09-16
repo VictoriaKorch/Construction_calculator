@@ -13,6 +13,7 @@ export class ConstructionService {
     private likeRepo: Repository<Like>,
   ) {}
 
+  // Метод для получения всех карточек (остается для страницы Плитки)
   async getPublishedServices(): Promise<any[]> {
     const services = await this.serviceRepo.find({ where: { status: 'published' } });
     
@@ -43,14 +44,34 @@ export class ConstructionService {
     return { ...service, likesCount };
   }
 
+  // Новый метод: получить строго ПЕРВУЮ опубликованную карточку (только 1 строку)
+  async getFirstService(): Promise<any> {
+    const rows = await this.serviceRepo.query(
+      `SELECT * FROM construction_services WHERE status = 'published' ORDER BY id ASC LIMIT 1`
+    );
+    const service = rows[0] ?? null;
+    if (!service) return null;
+
+    const likesCount = await this.likeRepo.count({ where: { service: { id: service.id } } });
+    return { ...service, likesCount };
+  }
+
+  // Обновленный метод: получить строго СЛЕДУЮЩУЮ карточку (только 1 строку)
   async getNextService(currentId: number): Promise<any> {
-    const published = await this.getPublishedServices();
-    if (published.length === 0) return null;
-    const currentIndex = published.findIndex(s => s.id === currentId);
-    if (currentIndex === -1 || currentIndex === published.length - 1) {
-      return published[0];
+    const rows = await this.serviceRepo.query(
+      `SELECT * FROM construction_services WHERE status = 'published' AND id > $1 ORDER BY id ASC LIMIT 1`,
+      [currentId]
+    );
+    
+    let nextService = rows[0] ?? null;
+
+    // Если следующей карточки нет, возвращаемся к первой
+    if (!nextService) {
+      return await this.getFirstService();
     }
-    return published[currentIndex + 1];
+
+    const likesCount = await this.likeRepo.count({ where: { service: { id: nextService.id } } });
+    return { ...nextService, likesCount };
   }
 
   async publishService(id: number, data: Partial<ConstructionServiceEntity>): Promise<void> {
