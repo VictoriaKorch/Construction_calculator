@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Query, Body, Render, Redirect, Res } from '@nestjs/common';
+import { Controller, Get, Post, Param, Query, Body, Render, Redirect, Res, Headers } from '@nestjs/common';
 import { ConstructionService } from './construction.service.js';
 
 @Controller('construction')
@@ -106,8 +106,17 @@ export class ConstructionController {
   }
 
   @Post('delete')
-  @Redirect('/construction/tile')
-  async deleteService(@Body('service_id') serviceId: string) {
+  @Redirect('/construction/tile') // Резервный путь
+  async deleteService(
+    @Body('service_id') serviceId: string,
+    @Headers('referer') referer: string // Считываем URL, откуда пришел запрос
+  ) {
+    // Логическое удаление через SQL курсор (остается без изменений)
     await this.constructionService.softDeleteSql(Number(serviceId));
+    
+    // Возвращаем пользователя на страницу с сохраненными фильтрами
+    if (referer) {
+      return { url: referer };
+    }
   }
 }
