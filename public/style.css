@@ -135,31 +135,30 @@ body {
     margin-top: 18px; 
     text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.6); 
     flex: 1; 
-    word-break: break-word;
-    line-height: 1.2;
+    word-break: break-word; /* Разрешаем перенос текста */
+    line-height: 1.2; /* Делаем отступ между строками комфортным */
 }
 
 .service-details {
     display: flex;
     flex-direction: column; 
     align-items: stretch; 
-    gap: 6px;
+    gap: 4px; /* Уменьшили отступ между ними */
     flex-shrink: 0; 
-    min-width: 95px; 
+    min-width: 85px; 
 }
-
 .detail-item {
-    background: rgba(0, 0, 0, 0.15); 
-    padding: 5px 10px;
-    border-radius: 7px;
+    background: rgba(0, 0, 0, 0.25); 
+    padding: 4px 6px; /* Уменьшили отступы внутри плашки */
+    border-radius: 6px;
     backdrop-filter: blur(4px);
-    font-weight: 500;
-    font-size: 11px;
-    border: 1px solid rgba(255,255,255,0.08); 
+    font-weight: 600;
+    font-size: 10px; /* Уменьшили шрифт */
+    border: 1px solid rgba(255,255,255,0.15); 
     text-align: center; 
     width: 100%;
+    color: #fff;
 }
-
 .description-wrapper {
     display: flex;
     flex-direction: column;
@@ -211,8 +210,7 @@ body {
 .feed-sidebar {
     position: absolute;
     right: 14px;
-    top: 42%;
-    transform: translateY(-50%);
+    bottom: 210px; /* Подняли повыше (было 170px) */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -575,4 +573,23 @@ body {
     margin-top: 5px;
     color: #737a8e;
     font-size: 12px;
+}
+.tile-delete-btn {
+    background: #0468ff; /* Тот же цвет, что у кнопки Найти */
+    color: #fff;
+    border: none;
+    height: 32px; /* Меньше, чем 40px у search-btn */
+    border-radius: 12px; /* Такое же скругление */
+    width: 100%; /* Во всю ширину карточки */
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tile-delete-btn:hover {
+    background: #0661ec; 
 }

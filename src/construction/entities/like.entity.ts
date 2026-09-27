@@ -4,14 +4,14 @@ import { ConstructionServiceEntity } from './construction-service.entity.js';
 
 @Entity('construction_service_likes')
 export class Like {
-  @PrimaryGeneratedColumn({ name: 'construction_service_like_id' })
+  @PrimaryGeneratedColumn({ name: 'like_id' })
   id: number;
 
   @ManyToOne(() => User, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'construction_service_user_id' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(() => ConstructionServiceEntity, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'construction_service_item_id' })
+  @JoinColumn({ name: 'item_id' })
   service: ConstructionServiceEntity;
 }

@@ -101,7 +101,7 @@ export class ConstructionService {
   // Удаление услуги - СТРОГО СЫРОЙ SQL (С новыми названиями колонок)
   async softDeleteSql(id: number): Promise<void> {
     await this.serviceRepo.query(
-      `UPDATE construction_service_items SET construction_service_status = $1 WHERE construction_service_item_id = $2`,
+      `UPDATE construction_service_items SET status = $1 WHERE item_id = $2`,
       ['deleted', id]
     );
   }

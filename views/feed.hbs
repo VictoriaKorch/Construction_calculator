@@ -3,7 +3,6 @@
 <div class="feed-container">
     {{#if ConstructionService}}
         <div class="video-wrapper">
-            <!-- Заменяем дефолтную картинку на дефолтное видео -->
             {{#if ConstructionService.videoUrl}}
                 <video src="http://localhost:9000/construction-assets/{{ConstructionService.videoUrl}}" class="feed-video" autoplay muted loop playsinline></video>
             {{else}}

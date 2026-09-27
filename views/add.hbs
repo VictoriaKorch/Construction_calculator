@@ -10,7 +10,7 @@
             
             <div class="field-card">
                 <label>Файл изображения</label>
-                <input type="file" accept="image/*" class="file-input" style="margin-bottom: 12px;">
+                <input type="file" accept="image/*" class="file-input" style="margin-bottom: 12px;" required>
                 <div class="media-card" style="margin-top: 10px;">
                     {{#if ConstructionService.imageUrl}}
                         <img src="http://localhost:9000/construction-assets/{{ConstructionService.imageUrl}}" class="preview-image" alt="Превью фото">
@@ -21,7 +21,7 @@
             </div>
             <div class="field-card">
                 <label>Файл видео</label>
-                <input type="file" accept="video/*" class="file-input" style="margin-bottom: 12px;">
+                <input type="file" accept="video/*" class="file-input" style="margin-bottom: 12px;" required>
                 <div class="media-card" style="margin-top: 10px;">
                     <video class="preview-video" controls style="width: 100%;">
                         {{#if ConstructionService.videoUrl}}
@@ -57,14 +57,14 @@
         <form class="add-form" action="/construction/add-draft" method="POST" novalidate>
             <div class="field-card">
                 <label>Файл изображения</label>
-                <input type="file" accept="image/*" class="file-input" style="margin-bottom: 12px;">
+                <input type="file" accept="image/*" class="file-input" style="margin-bottom: 12px;" required>
                 <div class="media-card" style="margin-top: 10px;">
                     <img src="/img/default.jpg" class="preview-image" alt="Превью фото">
                 </div>
             </div>
             <div class="field-card">
                 <label>Файл видео</label>
-                <input type="file" accept="video/*" class="file-input" style="margin-bottom: 12px;">
+                <input type="file" accept="video/*" class="file-input" style="margin-bottom: 12px;" required>
                 <div class="media-card" style="margin-top: 10px;">
                     <video class="preview-video" controls style="width: 100%;">
                         <source src="/img/default-video.mp4" type="video/mp4">
