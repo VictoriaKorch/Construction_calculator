@@ -3,7 +3,7 @@ dotenv.config();
 
 import { DataSource } from 'typeorm';
 import { ConstructionServiceEntity } from '../src/construction/entities/construction-service.entity.js';
-import { User } from '../src/construction/entities/user.entity.js';
+import { User } from '../src/users/entities/user.entity.js';
 import { Like } from '../src/construction/entities/like.entity.js';
 
 const dataSource = new DataSource({

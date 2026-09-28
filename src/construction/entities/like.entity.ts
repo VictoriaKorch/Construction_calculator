@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from './user.entity.js';
+import { User } from '../../users/entities/user.entity.js';
 import { ConstructionServiceEntity } from './construction-service.entity.js';
 
 @Entity('construction_service_likes')

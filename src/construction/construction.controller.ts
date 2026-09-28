@@ -1,122 +1,73 @@
-import { Controller, Get, Post, Param, Query, Body, Render, Redirect, Res, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Query, Body, ParseIntPipe, UseInterceptors, UploadedFiles, HttpCode, ParseBoolPipe, DefaultValuePipe } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ConstructionService } from './construction.service.js';
+import { ConstructionFiltersDto } from './dto/construction-filters.dto.js';
+import { CreateConstructionDto } from './dto/create-construction.dto.js';
+import { UpdateConstructionDto } from './dto/update-construction.dto.js';
+import { ConstructionResponseDto } from './dto/construction-response.dto.js';
+import { LikeDto } from './dto/like.dto.js';
+import 'multer'; 
 
 @Controller('construction')
 export class ConstructionController {
   constructor(private readonly constructionService: ConstructionService) {}
 
-  @Get('tile')
-  @Render('tile')
-  async getTilePage(
-    @Query('minPrice') minPriceQuery?: string,
-    @Query('maxPrice') maxPriceQuery?: string
-  ) {
-    let services = await this.constructionService.getPublishedServices();
-
-    let minLimit = services.length > 0 ? Math.min(...services.map(s => Number(s.price))) : 0;
-    let maxLimit = services.length > 0 ? Math.max(...services.map(s => Number(s.price))) : 150000;
-
-    let min = minPriceQuery ? Number(minPriceQuery) : NaN;
-    let max = maxPriceQuery ? Number(maxPriceQuery) : NaN;
-
-    if (!isNaN(min) && !isNaN(max) && min > max) {
-      const temp = min; min = max; max = temp;
-    }
-    if (!isNaN(min)) services = services.filter(s => Number(s.price) >= min);
-    if (!isNaN(max)) services = services.filter(s => Number(s.price) <= max);
-
-    return { title: 'Список проектов', ConstructionServices: services, currentMin: !isNaN(min) ? min : minLimit, currentMax: !isNaN(max) ? max : maxLimit, minLimit, maxLimit, navTileActive: true };
+  @Get()
+  async getList(@Query() filters: ConstructionFiltersDto): Promise<ConstructionResponseDto[]> {
+    return this.constructionService.getPublishedServices(filters);
   }
 
+  // Получить ленту (одна карточка). Поддержка ?id=...&next=true
   @Get('feed')
-  @Render('feed')
-  async getFeed(@Query('id') id?: string, @Query('next') next?: string) {
-    let service = null;
-    
-    if (id) {
-      service = await this.constructionService.getServiceById(Number(id));
-      if (next === 'true' && service) {
-        // Запрашиваем только одну следующую карточку
-        service = await this.constructionService.getNextService(service.id);
-      }
-    } else {
-      // При первой загрузке ленты запрашиваем строго первую карточку
-      service = await this.constructionService.getFirstService();
-    }
-
-    return { title: 'Лента', ConstructionService: service, navFeedActive: true };
+  async getFeed(
+    @Query('id') id?: string,
+    @Query('next', new DefaultValuePipe(false), ParseBoolPipe) next?: boolean
+  ): Promise<ConstructionResponseDto> {
+    const parsedId = id ? parseInt(id, 10) : undefined;
+    return this.constructionService.getFeed(parsedId, next);
   }
 
-  @Get('add')
-  @Render('add')
-  async getAddPage() {
+  @Get('draft')
+  async getDraft(): Promise<ConstructionResponseDto | null> {
     const draft = await this.constructionService.getDraft();
-    return { 
-      title: 'Добавление проекта', 
-      ConstructionService: draft, 
-      hasDraft: !!draft, 
-      navAddActive: true 
-    };
+    return draft ? draft : null;
   }
 
-  @Post('add-draft')
-  async createDraft(@Body('title') title: string, @Res() res: any) {
-    if (!title) {
-      return res.render('add', {
-        title: 'Добавление проекта',
-        hasDraft: false,
-        navAddActive: true,
-        errorTitle: true 
-      });
-    }
-
-    await this.constructionService.createDraft(title);
-    return res.redirect('/construction/add');
+  @Post()
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'image', maxCount: 1 },
+    { name: 'video', maxCount: 1 },
+  ]))
+  async createService(
+    @Body() createDto: CreateConstructionDto,
+    @UploadedFiles() files: { image?: Express.Multer.File[], video?: Express.Multer.File[] },
+  ): Promise<ConstructionResponseDto> {
+    const imageFile = files?.image ? files.image[0] : undefined;
+    const videoFile = files?.video ? files.video[0] : undefined;
+    return this.constructionService.createService(createDto, imageFile, videoFile);
   }
 
-  @Post('publish')
-  async publishDraft(
-    @Body('id') id: string,
-    @Body('title') title: string,
-    @Body('description') description: string,
-    @Body('price') price: string,
-    @Body('area') area: string,
-    @Res() res: any 
-  ) {
-    if (!title || !description || !price || !area) {
-      return res.render('add', {
-        title: 'Публикация проекта',
-        hasDraft: true,
-        navAddActive: true,
-        ConstructionService: { id, title, description, price, area },
-        errorTitle: !title,
-        errorDesc: !description,
-        errorPrice: !price,
-        errorArea: !area
-      });
-    }
-
-    await this.constructionService.publishService(Number(id), {
-      title,
-      description,
-      price: Number(price),
-      area: Number(area)
-    });
-    return res.redirect('/construction/tile');
+  // PUT принимает DTO с полями для заполнения черновика
+  @Put(':id/publish')
+  async publishService(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateConstructionDto
+  ): Promise<ConstructionResponseDto> {
+    return this.constructionService.publishService(id, updateDto);
   }
 
-  @Post('delete')
-  @Redirect('/construction/tile') // Резервный путь
-  async deleteService(
-    @Body('service_id') serviceId: string,
-    @Headers('referer') referer: string // Считываем URL, откуда пришел запрос
-  ) {
-    // Логическое удаление через SQL курсор (остается без изменений)
-    await this.constructionService.softDeleteSql(Number(serviceId));
-    
-    // Возвращаем пользователя на страницу с сохраненными фильтрами
-    if (referer) {
-      return { url: referer };
-    }
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteService(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.constructionService.softDeleteSql(id);
+  }
+
+  @Post(':id/like')
+  @HttpCode(204)
+  async handleLike(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() likeDto: LikeDto
+  ): Promise<void> {
+    await this.constructionService.handleLike(id, likeDto.action);
   }
 }

@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from './user.entity.js';
+import { Exclude } from 'class-transformer';
+import { User } from '../../users/entities/user.entity.js';
 
 @Entity('construction_service_items')
 export class ConstructionServiceEntity {
@@ -24,6 +25,7 @@ export class ConstructionServiceEntity {
   @Column({ name: 'video_url', type: 'varchar', nullable: true })
   videoUrl: string;
 
+  @Exclude()
   @Column({ name: 'status', type: 'varchar', length: 20, default: 'draft' })
   status: string; 
 
@@ -33,6 +35,7 @@ export class ConstructionServiceEntity {
   @UpdateDateColumn({ name: 'formed_at' })
   formationDate: Date; 
 
+  @Exclude()
   @ManyToOne(() => User, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'creator_id' })
   creator: User;

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConstructionModule } from './construction/construction.module.js';
+import { UsersModule } from './users/users.module.js';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ConstructionModule } from './construction/construction.module.js';
       }),
     }),
     ConstructionModule,
+    UsersModule, // Добавили новый домен
   ],
 })
 export class AppModule {}

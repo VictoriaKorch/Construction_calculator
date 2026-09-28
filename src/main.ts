@@ -1,30 +1,23 @@
-// src/main.ts
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import hbs from 'hbs';
-
-// Получаем путь к текущей директории
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
-  // Путь к папке views
-  const viewsPath = join(__dirname, '..', 'views');
+  const app = await NestFactory.create(AppModule);
   
-  // Регистрируем partials ПЕРЕД настройкой шаблонов
-  hbs.registerPartials(join(viewsPath, 'partials'));
+  // Устанавливаем префикс /api для всех маршрутов
+  app.setGlobalPrefix('api');
 
-  // Настройка шаблонов (Handlebars)
-  app.setBaseViewsDir(viewsPath);
-  app.setViewEngine('hbs');
+  // Включаем валидацию входящих данных
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }));
 
-  // Настройка статики (CSS, изображения)
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  // Включаем сериализацию (для работы @Exclude)
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   await app.listen(3000);
 }
