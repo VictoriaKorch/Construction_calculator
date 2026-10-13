@@ -7,7 +7,8 @@ export class ConstructionResponseDto {
   imageUrl: string | null;
   videoUrl: string | null;
   likesCount: number;
-  isCreator: number; // 0 или 1
+  creator_id: number; // Исправление 3: ID создателя из ER диаграммы
+  isLiked: number;    // Исправление 2: 0 - не поставил лайк, 1 - поставил
   createdAt: Date;
   formationDate: Date;
 }

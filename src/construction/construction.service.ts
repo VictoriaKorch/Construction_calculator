@@ -26,7 +26,15 @@ export class ConstructionService {
 
   private async toResponseDto(service: ConstructionServiceEntity): Promise<ConstructionResponseDto> {
     const likesCount = await this.likeRepo.count({ where: { service: { id: service.id } } });
-    const isCreator = service.creator?.id === getCurrentUserId() ? 1 : 0;
+    const currentUserId = getCurrentUserId();
+    
+    // Поиск лайка для вычисления isLiked (0/1)
+    const userLike = await this.likeRepo.findOne({ 
+      where: { service: { id: service.id }, user: { id: currentUserId } } 
+    });
+    const isLiked = userLike ? 1 : 0;
+    
+    const creator_id = service.creator?.id || 0;
     
     return {
       id: service.id,
@@ -37,7 +45,8 @@ export class ConstructionService {
       imageUrl: (await this.minioService.getSignedUrl(service.imageUrl)) ?? null,
       videoUrl: (await this.minioService.getSignedUrl(service.videoUrl)) ?? null,
       likesCount: likesCount,
-      isCreator: isCreator,
+      creator_id: creator_id,
+      isLiked: isLiked,
       createdAt: service.createdAt,
       formationDate: service.formationDate
     };
@@ -60,22 +69,30 @@ export class ConstructionService {
   }
 
   async getFeed(id?: number, next?: boolean): Promise<ConstructionResponseDto> {
+    // Защита от пустого запроса без параметров
+    if (id === undefined && !next) {
+        throw new BadRequestException(); 
+    }
+
     let query = this.serviceRepo.createQueryBuilder('service')
       .leftJoinAndSelect('service.creator', 'creator')
       .where('service.status = :status', { status: 'published' })
       .orderBy('service.id', 'ASC');
 
-    if (id) {
+    // Если id передан, применяем условия
+    if (id !== undefined) {
       if (next) {
         query.andWhere('service.id > :id', { id });
       } else {
         query.andWhere('service.id = :id', { id });
       }
-    }
+    } 
+    // Если передан только next=true, TypeORM просто возьмет самую первую запись
 
     let service = await query.getOne();
 
-    if (!service && id && next) {
+    // Зацикливание: если свайпнули последнюю карточку, возвращаем снова первую
+    if (!service && id !== undefined && next) {
       service = await this.serviceRepo.findOne({
         where: { status: 'published' },
         order: { id: 'ASC' },
@@ -106,13 +123,11 @@ export class ConstructionService {
     if (draft) throw new BadRequestException(); 
 
     const user = await this.userRepo.findOne({ where: { id: getCurrentUserId() } });
-    if (!user) throw new NotFoundException();
+    if (!user) throw new NotFoundException(); 
 
+    // В черновик сохраняем только title, статус и создателя
     const newService = this.serviceRepo.create({
       title: dto.title,
-      description: dto.description,
-      price: dto.price,
-      area: dto.area,
       status: 'draft',
       creator: user
     });
@@ -136,7 +151,7 @@ export class ConstructionService {
       relations: { creator: true }
     });
     
-    if (!service) throw new NotFoundException();
+    if (!service) throw new NotFoundException(); 
     if (service.status !== 'draft') throw new BadRequestException(); 
     
     if (dto.title) service.title = dto.title;
@@ -158,10 +173,10 @@ export class ConstructionService {
 
   async handleLike(id: number, action: number): Promise<void> {
     const service = await this.serviceRepo.findOne({ where: { id } });
-    if (!service) throw new NotFoundException();
+    if (!service) throw new NotFoundException(); 
     
     const user = await this.userRepo.findOne({ where: { id: getCurrentUserId() } });
-    if (!user) throw new NotFoundException();
+    if (!user) throw new NotFoundException(); 
 
     const existingLike = await this.likeRepo.findOne({ where: { service: { id }, user: { id: getCurrentUserId() } } });
 

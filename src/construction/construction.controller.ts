@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Query, Body, ParseIntPipe, UseInterceptors, UploadedFiles, HttpCode, ParseBoolPipe, DefaultValuePipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Query, Body, ParseIntPipe, UseInterceptors, UploadedFiles, HttpCode, ParseBoolPipe, DefaultValuePipe, BadRequestException } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ConstructionService } from './construction.service.js';
 import { ConstructionFiltersDto } from './dto/construction-filters.dto.js';
@@ -17,12 +17,15 @@ export class ConstructionController {
     return this.constructionService.getPublishedServices(filters);
   }
 
-  // Получить ленту (одна карточка). Поддержка ?id=...&next=true
   @Get('feed')
   async getFeed(
     @Query('id') id?: string,
     @Query('next', new DefaultValuePipe(false), ParseBoolPipe) next?: boolean
   ): Promise<ConstructionResponseDto> {
+    // Блокируем запрос ТОЛЬКО если нет ни id, ни next
+    if (id === undefined && next === false) {
+      throw new BadRequestException(); // Строго без поясняющего текста (правило преподавателя)
+    }
     const parsedId = id ? parseInt(id, 10) : undefined;
     return this.constructionService.getFeed(parsedId, next);
   }
@@ -47,7 +50,6 @@ export class ConstructionController {
     return this.constructionService.createService(createDto, imageFile, videoFile);
   }
 
-  // PUT принимает DTO с полями для заполнения черновика
   @Put(':id/publish')
   async publishService(
     @Param('id', ParseIntPipe) id: number,
