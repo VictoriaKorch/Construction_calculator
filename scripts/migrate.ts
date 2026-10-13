@@ -14,7 +14,7 @@ const dataSource = new DataSource({
   password: process.env.DB_PASSWORD || 'root',
   database: process.env.DB_DATABASE || 'construction_db',
   entities: [User, ConstructionServiceEntity, Like],
-  synchronize: true, 
+  synchronize: false, 
 });
 
 async function run() {
