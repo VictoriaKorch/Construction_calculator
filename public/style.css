@@ -122,43 +122,91 @@ body {
 .title-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: flex-end; /* Теперь выравниваем по низу */
     margin-bottom: 12px;
     gap: 12px;
     width: 100%;
 }
 
+/* Название выводится полностью и при необходимости переносится */
 .service-title {
     font-size: 16px; 
     font-weight: 700;
     margin-bottom: 0;
-    margin-top: 18px; 
     text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.6); 
     flex: 1; 
-    word-break: break-word; /* Разрешаем перенос текста */
-    line-height: 1.2; /* Делаем отступ между строками комфортным */
+    word-break: break-word; 
+    line-height: 1.2; 
 }
 
+/* Параметры друг под другом, выровнены по правому краю */
 .service-details {
     display: flex;
     flex-direction: column; 
-    align-items: stretch; 
-    gap: 4px; /* Уменьшили отступ между ними */
+    align-items: flex-end; 
+    gap: 4px;
     flex-shrink: 0; 
-    min-width: 85px; 
 }
+
+/* Компактные плашки */
 .detail-item {
     background: rgba(0, 0, 0, 0.25); 
-    padding: 4px 6px; /* Уменьшили отступы внутри плашки */
+    padding: 4px 8px; 
     border-radius: 6px;
     backdrop-filter: blur(4px);
     font-weight: 600;
-    font-size: 10px; /* Уменьшили шрифт */
+    font-size: 12px; 
+    line-height: 1.2; 
     border: 1px solid rgba(255,255,255,0.15); 
     text-align: center; 
-    width: 100%;
     color: #fff;
 }
+
+/* Лайки теперь часть потока и всегда двигаются вместе с параметрами */
+.feed-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; 
+    margin-bottom: 8px; /* Отступ от кнопок до параметров */
+    z-index: 20; 
+}
+
+.sidebar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.sidebar-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.2); 
+    backdrop-filter: blur(4px);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 800; 
+    transition: background 0.2s ease;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.sidebar-item:hover .sidebar-icon {
+    background: rgba(0, 0, 0, 0.35); 
+}
+
+.sidebar-text {
+    font-size: 11px;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); 
+}
+
 .description-wrapper {
     display: flex;
     flex-direction: column;
@@ -204,53 +252,6 @@ body {
 
 .desc-checkbox:checked ~ .toggle-description::after {
     content: attr(data-less);
-}
-
-/* Панель лайков в стиле TikTok */
-.feed-sidebar {
-    position: absolute;
-    right: 14px;
-    bottom: 210px; /* Подняли повыше (было 170px) */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    z-index: 20; 
-}
-
-.sidebar-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    color: #fff;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.sidebar-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.2); 
-    backdrop-filter: blur(4px);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 18px;
-    font-weight: 800; 
-    transition: background 0.2s ease;
-    border: 1px solid rgba(255,255,255,0.15);
-}
-
-.sidebar-item:hover .sidebar-icon {
-    background: rgba(0, 0, 0, 0.35); 
-}
-
-.sidebar-text {
-    font-size: 11px;
-    font-weight: 600;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); 
 }
 
 .empty-state {
@@ -493,13 +494,12 @@ body {
     color: #0468ff;
 }
 
-/* ВАЖНО: Разрешаем видимость за краями (overflow: visible), чтобы кружочки не резало */
 .slider-bar {
     border: none;
     background: transparent;
     gap: 12px;
     overflow: visible; 
-    padding: 6px 0; /* Даем немного воздуха сверху и снизу */
+    padding: 6px 0; 
 }
 
 .slider-bound {
@@ -519,7 +519,6 @@ body {
     outline: none;
 }
 
-/* ВАЖНО: Уменьшили кружочек до 16px, теперь он идеально круглый */
 .search-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -574,13 +573,15 @@ body {
     color: #737a8e;
     font-size: 12px;
 }
+
+/* Новая кнопка удаления для плитки */
 .tile-delete-btn {
-    background: #0468ff; /* Тот же цвет, что у кнопки Найти */
+    background: #0468ff; 
     color: #fff;
     border: none;
-    height: 32px; /* Меньше, чем 40px у search-btn */
-    border-radius: 12px; /* Такое же скругление */
-    width: 100%; /* Во всю ширину карточки */
+    height: 32px; 
+    border-radius: 12px; 
+    width: 100%; 
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
