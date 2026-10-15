@@ -1,190 +1,200 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConstructionServiceEntity } from './entities/construction-service.entity.js';
 import { Like } from './entities/like.entity.js';
-import { User } from '../users/entities/user.entity.js';
-import { ConstructionResponseDto } from './dto/construction-response.dto.js';
-import { ConstructionFiltersDto } from './dto/construction-filters.dto.js';
+import { MinioSimpleService } from './minio.service.js';
 import { CreateConstructionDto } from './dto/create-construction.dto.js';
 import { UpdateConstructionDto } from './dto/update-construction.dto.js';
-import { MinioSimpleService } from './minio.service.js';
-import { getCurrentUserId } from '../common/current-user.js';
-import 'multer';
+import { ConstructionFiltersDto } from './dto/construction-filters.dto.js';
+import { ConstructionResponseDto } from './dto/construction-response.dto.js';
 
 @Injectable()
 export class ConstructionService {
   constructor(
     @InjectRepository(ConstructionServiceEntity)
-    private serviceRepo: Repository<ConstructionServiceEntity>,
+    private constructionRepository: Repository<ConstructionServiceEntity>,
     @InjectRepository(Like)
-    private likeRepo: Repository<Like>,
-    @InjectRepository(User)
-    private userRepo: Repository<User>,
+    private likeRepository: Repository<Like>,
     private minioService: MinioSimpleService,
   ) {}
 
-  private async toResponseDto(service: ConstructionServiceEntity): Promise<ConstructionResponseDto> {
-    const likesCount = await this.likeRepo.count({ where: { service: { id: service.id } } });
-    const currentUserId = getCurrentUserId();
-    
-    // Поиск лайка для вычисления isLiked (0/1)
-    const userLike = await this.likeRepo.findOne({ 
-      where: { service: { id: service.id }, user: { id: currentUserId } } 
+  async toResponseDto(service: ConstructionServiceEntity, userId?: number): Promise<ConstructionResponseDto> {
+    let isLiked = 0;
+    if (userId) {
+      const like = await this.likeRepository.findOne({ 
+        where: { service: { id: service.id }, user: { id: userId } } 
+      });
+      if (like) isLiked = 1;
+    }
+
+    const likesCount = await this.likeRepository.count({ 
+      where: { service: { id: service.id } } 
     });
-    const isLiked = userLike ? 1 : 0;
-    
-    const creator_id = service.creator?.id || 0;
-    
+
     return {
       id: service.id,
-      title: service.title,
+      title: service.title ?? null,
       description: service.description ?? null,
       price: service.price ?? null,
       area: service.area ?? null,
-      imageUrl: (await this.minioService.getSignedUrl(service.imageUrl)) ?? null,
-      videoUrl: (await this.minioService.getSignedUrl(service.videoUrl)) ?? null,
+      imageUrl: service.imageUrl ?? null,
+      videoUrl: service.videoUrl ?? null,
       likesCount: likesCount,
-      creator_id: creator_id,
+      creator_id: service.creator?.id ?? null, 
       isLiked: isLiked,
       createdAt: service.createdAt,
-      formationDate: service.formationDate
+      formationDate: service.formationDate ?? null,
     };
   }
 
-  async getPublishedServices(filters: ConstructionFiltersDto): Promise<ConstructionResponseDto[]> {
-    const query = this.serviceRepo.createQueryBuilder('service')
+  async getPublishedServices(filters: ConstructionFiltersDto, userId?: number): Promise<ConstructionResponseDto[]> {
+    const query = this.constructionRepository.createQueryBuilder('service')
       .leftJoinAndSelect('service.creator', 'creator')
       .where('service.status = :status', { status: 'published' });
 
-    if (filters.minPrice !== undefined) {
+    if (filters.minPrice) {
       query.andWhere('service.price >= :minPrice', { minPrice: filters.minPrice });
     }
-    if (filters.maxPrice !== undefined) {
+    if (filters.maxPrice) {
       query.andWhere('service.price <= :maxPrice', { maxPrice: filters.maxPrice });
     }
 
     const services = await query.getMany();
-    return Promise.all(services.map(s => this.toResponseDto(s)));
+    return Promise.all(services.map(s => this.toResponseDto(s, userId)));
   }
 
-  async getFeed(id?: number, next?: boolean): Promise<ConstructionResponseDto> {
-    // Защита от пустого запроса без параметров
-    if (id === undefined && !next) {
-        throw new BadRequestException(); 
-    }
-
-    let query = this.serviceRepo.createQueryBuilder('service')
+  async getFeed(id?: number, next: boolean = false, userId?: number): Promise<ConstructionResponseDto> {
+    const query = this.constructionRepository.createQueryBuilder('service')
       .leftJoinAndSelect('service.creator', 'creator')
       .where('service.status = :status', { status: 'published' })
       .orderBy('service.id', 'ASC');
 
-    // Если id передан, применяем условия
     if (id !== undefined) {
       if (next) {
         query.andWhere('service.id > :id', { id });
       } else {
         query.andWhere('service.id = :id', { id });
       }
-    } 
-    // Если передан только next=true, TypeORM просто возьмет самую первую запись
-
-    let service = await query.getOne();
-
-    // Зацикливание: если свайпнули последнюю карточку, возвращаем снова первую
-    if (!service && id !== undefined && next) {
-      service = await this.serviceRepo.findOne({
-        where: { status: 'published' },
-        order: { id: 'ASC' },
-        relations: { creator: true }
-      });
     }
 
-    if (!service) throw new NotFoundException(); 
-    return this.toResponseDto(service);
+    const service = await query.getOne();
+    if (!service) {
+      throw new NotFoundException();
+    }
+
+    return this.toResponseDto(service, userId);
   }
 
-  async getDraft(): Promise<ConstructionResponseDto | null> {
-    const draft = await this.serviceRepo.findOne({ 
-      where: { status: 'draft', creator: { id: getCurrentUserId() } },
-      relations: { creator: true }
+  async getDraft(userId: number): Promise<ConstructionResponseDto | null> {
+    const draft = await this.constructionRepository.findOne({
+      where: { creator: { id: userId }, status: 'draft' },
+      relations: { creator: true } 
     });
     if (!draft) return null;
-    return this.toResponseDto(draft);
+    return this.toResponseDto(draft, userId);
   }
 
   async createService(
-    dto: CreateConstructionDto, 
-    image?: Express.Multer.File, 
-    video?: Express.Multer.File
+    createDto: CreateConstructionDto,
+    imageFile?: Express.Multer.File,
+    videoFile?: Express.Multer.File,
+    userId?: number
   ): Promise<ConstructionResponseDto> {
     
-    const draft = await this.serviceRepo.findOne({ where: { status: 'draft', creator: { id: getCurrentUserId() } }});
-    if (draft) throw new BadRequestException(); 
+    // Блокируем создание, если не переданы обязательные файлы
+    if (!imageFile || !videoFile) {
+      throw new BadRequestException(); 
+    }
 
-    const user = await this.userRepo.findOne({ where: { id: getCurrentUserId() } });
-    if (!user) throw new NotFoundException(); 
-
-    // В черновик сохраняем только title, статус и создателя
-    const newService = this.serviceRepo.create({
-      title: dto.title,
+    // 1. Создаем черновик без файлов, чтобы сгенерировался ID
+    const newService = this.constructionRepository.create({
+      title: createDto.title,
       status: 'draft',
-      creator: user
+      creator: { id: userId }, 
     });
-    
-    let savedService = await this.serviceRepo.save(newService);
+    let savedService = await this.constructionRepository.save(newService);
 
-    if (image) {
-      savedService.imageUrl = await this.minioService.uploadMedia(image.buffer, image.originalname, savedService.id, 'image');
-    }
-    if (video) {
-      savedService.videoUrl = await this.minioService.uploadMedia(video.buffer, video.originalname, savedService.id, 'video');
-    }
+    // 2. Загружаем файлы в Minio (они точно существуют, так как прошли проверку выше)
+    const imageUrl = await this.minioService.uploadMedia(imageFile.buffer, imageFile.originalname, savedService.id, 'image');
+    const videoUrl = await this.minioService.uploadMedia(videoFile.buffer, videoFile.originalname, savedService.id, 'video');
 
-    savedService = await this.serviceRepo.save(savedService);
-    return this.toResponseDto(savedService);
-  }
+    // 3. Сохраняем URL файлов в БД
+    savedService.imageUrl = imageUrl;
+    savedService.videoUrl = videoUrl;
+    savedService = await this.constructionRepository.save(savedService);
 
-  async publishService(id: number, dto: UpdateConstructionDto): Promise<ConstructionResponseDto> {
-    const service = await this.serviceRepo.findOne({ 
-      where: { id, creator: { id: getCurrentUserId() } }, 
+    const completeService = await this.constructionRepository.findOne({
+      where: { id: savedService.id },
       relations: { creator: true }
     });
-    
-    if (!service) throw new NotFoundException(); 
-    if (service.status !== 'draft') throw new BadRequestException(); 
-    
-    if (dto.title) service.title = dto.title;
-    if (dto.description) service.description = dto.description;
-    if (dto.price !== undefined) service.price = dto.price;
-    if (dto.area !== undefined) service.area = dto.area;
 
+    return this.toResponseDto(completeService!, userId);
+  }
+
+  async publishService(id: number, updateDto: UpdateConstructionDto, userId: number): Promise<ConstructionResponseDto> {
+    const service = await this.constructionRepository.findOne({ 
+      where: { id },
+      relations: { creator: true } 
+    });
+    
+    if (!service) {
+      throw new NotFoundException(); 
+    }
+    
+    if (service.creator?.id !== userId) {
+      throw new ForbiddenException(); 
+    }
+
+    if (updateDto.description !== undefined) service.description = updateDto.description;
+    if (updateDto.price !== undefined) service.price = updateDto.price;
+    if (updateDto.area !== undefined) service.area = updateDto.area;
+    
     service.status = 'published';
-    await this.serviceRepo.save(service);
-    return this.toResponseDto(service);
-  }
-
-  async softDeleteSql(id: number): Promise<void> {
-    await this.serviceRepo.query(
-      `UPDATE construction_service_items SET status = $1 WHERE item_id = $2 AND creator_id = $3`,
-      ['deleted', id, getCurrentUserId()]
-    );
-  }
-
-  async handleLike(id: number, action: number): Promise<void> {
-    const service = await this.serviceRepo.findOne({ where: { id } });
-    if (!service) throw new NotFoundException(); 
+    service.formationDate = new Date();
     
-    const user = await this.userRepo.findOne({ where: { id: getCurrentUserId() } });
-    if (!user) throw new NotFoundException(); 
+    const updatedService = await this.constructionRepository.save(service);
+    return this.toResponseDto(updatedService, userId);
+  }
 
-    const existingLike = await this.likeRepo.findOne({ where: { service: { id }, user: { id: getCurrentUserId() } } });
+  async softDeleteSql(id: number, userId: number): Promise<void> {
+    const service = await this.constructionRepository.findOne({ 
+      where: { id },
+      relations: { creator: true } 
+    });
+    
+    if (!service) {
+      throw new NotFoundException(); 
+    }
+    
+    if (service.creator?.id !== userId) {
+      throw new ForbiddenException(); 
+    }
 
-    if (action === 1 && !existingLike) {
-      const newLike = this.likeRepo.create({ service, user });
-      await this.likeRepo.save(newLike);
-    } else if (action === 0 && existingLike) {
-      await this.likeRepo.remove(existingLike);
+    await this.constructionRepository.softDelete(id);
+  }
+
+  async handleLike(id: number, action: number, userId: number): Promise<void> {
+    const service = await this.constructionRepository.findOne({ where: { id } });
+    if (!service) {
+      throw new NotFoundException();
+    }
+
+    const existingLike = await this.likeRepository.findOne({
+      where: { service: { id }, user: { id: userId } }
+    });
+
+    if (action === 1) {
+      if (!existingLike) {
+        const newLike = this.likeRepository.create({ service: { id }, user: { id: userId } });
+        await this.likeRepository.save(newLike);
+      }
+    } else if (action === 0) {
+      if (existingLike) {
+        await this.likeRepository.remove(existingLike);
+      }
+    } else {
+      throw new BadRequestException(); 
     }
   }
 }

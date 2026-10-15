@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConstructionModule } from './construction/construction.module.js';
 import { UsersModule } from './users/users.module.js';
+import { SessionModule } from './session/session.module.js'; // Добавили
+import { AuthModule } from './auth/auth.module.js'; // Добавили
 
 @Module({
   imports: [
@@ -18,11 +20,13 @@ import { UsersModule } from './users/users.module.js';
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_DATABASE'),
         autoLoadEntities: true,
-        synchronize: false, // Синхронизация выключена по методичке
+        synchronize: false, 
       }),
     }),
+    SessionModule,      // Зарегистрировали
+    AuthModule,         // Зарегистрировали
+    UsersModule,
     ConstructionModule,
-    UsersModule, // Добавили новый домен
   ],
 })
 export class AppModule {}

@@ -11,18 +11,24 @@ export class UsersService {
     private userRepo: Repository<User>,
   ) {}
 
-  async register(dto: RegisterUserDto): Promise<void> {
+  async register(dto: RegisterUserDto): Promise<User> {
     const existingUser = await this.userRepo.findOne({ where: { username: dto.username } });
-    
     if (existingUser) {
-      throw new BadRequestException(); 
+      throw new BadRequestException('Пользователь уже существует'); 
     }
-
     const newUser = this.userRepo.create({
       username: dto.username,
       password: dto.password, 
     });
+    return await this.userRepo.save(newUser);
+  }
 
-    await this.userRepo.save(newUser);
+  // Новый метод для валидации логина
+  async validateUser(username: string, pass: string): Promise<User | null> {
+    const user = await this.userRepo.findOne({ where: { username } });
+    if (user && user.password === pass) {
+      return user;
+    }
+    return null;
   }
 }
