@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Put, Delete, Param, Query, Body, ParseIntPipe, UseInterceptors, UploadedFiles, HttpCode, ParseBoolPipe, DefaultValuePipe, BadRequestException, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import express from 'express';
 import { ConstructionService } from './construction.service.js';
@@ -11,6 +12,7 @@ import { LikeDto } from './dto/like.dto.js';
 import { SessionGuard } from '../auth/guards/session.guard.js';
 import 'multer'; 
 
+@ApiTags('Constructions')
 @Controller('construction')
 export class ConstructionController {
   constructor(
@@ -27,18 +29,20 @@ export class ConstructionController {
     return undefined;
   }
 
+  @ApiOperation({ summary: 'Получение списка опубликованных услуг с фильтрацией' })
   @Get()
   async getList(
-    @Req() req: express.Request, // Перенесли на первое место
+    @Req() req: express.Request, 
     @Query() filters: ConstructionFiltersDto
   ): Promise<ConstructionResponseDto[]> {
     const userId = await this.getOptionalUserId(req);
     return this.constructionService.getPublishedServices(filters, userId);
   }
 
+  @ApiOperation({ summary: 'Получение ленты (открытие карточки или следующей)' })
   @Get('feed')
   async getFeed(
-    @Req() req: express.Request, // Перенесли на первое место
+    @Req() req: express.Request, 
     @Query('id') id?: string,
     @Query('next', new DefaultValuePipe(false), ParseBoolPipe) next?: boolean
   ): Promise<ConstructionResponseDto> {
@@ -50,6 +54,7 @@ export class ConstructionController {
     return this.constructionService.getFeed(parsedId, next, userId);
   }
 
+  @ApiOperation({ summary: 'Получение черновика авторизованного пользователя' })
   @Get('draft')
   @UseGuards(SessionGuard)
   async getDraft(@Req() req: any): Promise<ConstructionResponseDto | null> {
@@ -57,6 +62,7 @@ export class ConstructionController {
     return draft ? draft : null;
   }
 
+  @ApiOperation({ summary: 'Добавление новой услуги (черновика) с медиа' })
   @Post()
   @UseGuards(SessionGuard)
   @UseInterceptors(FileFieldsInterceptor([
@@ -73,6 +79,7 @@ export class ConstructionController {
     return this.constructionService.createService(createDto, imageFile, videoFile, req.userId);
   }
 
+  @ApiOperation({ summary: 'Публикация черновика услуги' })
   @Put(':id/publish')
   @UseGuards(SessionGuard)
   async publishService(
@@ -83,6 +90,7 @@ export class ConstructionController {
     return this.constructionService.publishService(id, updateDto, req.userId);
   }
 
+  @ApiOperation({ summary: 'Логическое удаление услуги' })
   @Delete(':id')
   @UseGuards(SessionGuard)
   @HttpCode(204)
@@ -93,6 +101,7 @@ export class ConstructionController {
     await this.constructionService.softDeleteSql(id, req.userId);
   }
 
+  @ApiOperation({ summary: 'Управление лайками (0 или 1)' })
   @Post(':id/like')
   @UseGuards(SessionGuard)
   @HttpCode(204)
